@@ -31,6 +31,12 @@ export const dimensions = {
   correlationHypothesis: ["zero", "nonzero"],
   factorCount: ["one", "two"],
   dataSeriesCount: ["two"],
+  // The two frequency flags are mutually exclusive, hence one Dimension, not
+  // two flags.
+  expectedCellFrequency: ["atMost10", "above10"],
+  // np·pq > 9. `no` is carried by the exact binomial test; without it the
+  // Dimension could never discriminate.
+  normalApproximationValid: ["yes", "no"],
 } as const satisfies DimensionSchema;
 
 /** The name of a Dimension — a category of mutually-exclusive Criteria. */
@@ -56,3 +62,14 @@ export type Tag = {
 
 /** The Tags of a single Dimension. */
 export type TagOf<D extends Dimension> = Extract<Tag, { dimension: D }>;
+
+/**
+ * The Criteria one test accepts, grouped by Dimension — the Catalog's authoring
+ * form. A missing key means the test doesn't care about that Dimension; several
+ * values under one key mean it accepts any of them. Keying by Dimension is what
+ * makes a value under the wrong Dimension a compile error, and it means the
+ * matching engine never has to parse or group tags itself.
+ */
+export type Accepts = {
+  readonly [D in Dimension]?: readonly ValueOf<D>[];
+};

@@ -10,6 +10,7 @@
  */
 
 import type {
+  Accepts,
   Dimension,
   DimensionSchema,
   Tag,
@@ -156,6 +157,32 @@ const _tagOfExcludesOtherDimensions: TagOf<"rankTies"> = {
   value: "present",
 };
 void _tagOfExcludesOtherDimensions;
+
+// --- Accepts: the Catalog's authoring form ---------------------------------
+
+const _legalAccepts: Accepts = {
+  measurementScale: ["interval", "ordinal"],
+  groupCount: ["oneVsPopulationValue"],
+  normalApproximationValid: ["no"],
+};
+void _legalAccepts;
+
+// Not caring about any Dimension is legal: every key is optional.
+const _acceptsNothingInParticular: Accepts = {};
+void _acceptsNothingInParticular;
+
+// The guarantee 04 exists for: a value filed under another Dimension's key.
+const _valueUnderWrongDimension: Accepts = {
+  // @ts-expect-error - "interval" is a measurementScale value, not a groupCount value
+  groupCount: ["interval"],
+};
+void _valueUnderWrongDimension;
+
+const _undeclaredDimensionInAccepts: Accepts = {
+  // @ts-expect-error - "notADimension" is not a declared Dimension
+  notADimension: ["interval"],
+};
+void _undeclaredDimensionInAccepts;
 
 export type {
   _ValuesAreScopedToTheirDimension,

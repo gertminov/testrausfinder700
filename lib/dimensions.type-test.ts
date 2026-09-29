@@ -9,13 +9,15 @@
  * silently regress into a passing build.
  */
 
-import type {
-  Accepts,
-  Dimension,
-  DimensionSchema,
-  Tag,
-  TagOf,
-  ValueOf,
+import {
+  type Accepts,
+  type Dimension,
+  type DimensionSchema,
+  type Selection,
+  selectionToTags,
+  type Tag,
+  type TagOf,
+  type ValueOf,
 } from "./dimensions";
 
 type Expect<T extends true> = T;
@@ -183,6 +185,44 @@ const _undeclaredDimensionInAccepts: Accepts = {
   notADimension: ["interval"],
 };
 void _undeclaredDimensionInAccepts;
+
+// --- Selection: at most one value per Dimension ---------------------------
+
+const _legalSelection: Selection = {
+  measurementScale: "interval",
+  groupCount: "oneVsPopulationValue",
+};
+void _legalSelection;
+
+// Nothing selected yet is legal: every key is optional.
+const _emptySelection: Selection = {};
+void _emptySelection;
+
+const _selectionValueFromWrongDimension: Selection = {
+  // @ts-expect-error - "interval" is a measurementScale value, not a groupCount value
+  groupCount: "interval",
+};
+void _selectionValueFromWrongDimension;
+
+// User story 6, structurally: a Dimension holds one value, so there is no way
+// to write two. The list form `Accepts` uses is rejected outright.
+const _twoValuesInOneDimension: Selection = {
+  // @ts-expect-error - a Selection holds one value per Dimension, not a list
+  sampleDependency: ["dependent", "independent"],
+};
+void _twoValuesInOneDimension;
+
+const _undeclaredDimensionInSelection: Selection = {
+  // @ts-expect-error - "notADimension" is not a declared Dimension
+  notADimension: "interval",
+};
+void _undeclaredDimensionInSelection;
+
+// The list form is plain Tags, so it narrows like any other Tag.
+const _selectionAsTags: Tag[] = selectionToTags({
+  measurementScale: "ordinal",
+});
+void _selectionAsTags;
 
 export type {
   _ValuesAreScopedToTheirDimension,

@@ -1,7 +1,7 @@
 import type { Accepts } from "./dimensions";
 
+/** One Catalog entry. Its id is the key it is filed under in `catalog`. */
 interface Test {
-  id: string;
   name: string;
   info: string;
   accepts: Accepts;
@@ -10,9 +10,15 @@ interface Test {
   aka?: string;
 }
 
-export const tests: Test[] = [
-  {
-    id: "gauss-test",
+/**
+ * The Catalog, keyed by test id. Keying by id is what makes a duplicate id a
+ * compile error, and what lets `TestId` be derived as a literal union. Ids are
+ * the deep-link surface: renaming one breaks every link to that test.
+ *
+ * `satisfies` rather than a type annotation, so the literal keys survive.
+ */
+export const catalog = {
+  "gauss-test": {
     name: "Gauss-Test",
     info: "Das ist der Gauss Test, er Gausst sehr viel und ist auch sonst echt toll",
     accepts: {
@@ -24,8 +30,7 @@ export const tests: Test[] = [
     },
     aka: "Z-Test",
   },
-  {
-    id: "one-sample-t-test",
+  "one-sample-t-test": {
     name: "1-Stichproben t-Test",
     info: "",
     accepts: {
@@ -38,8 +43,7 @@ export const tests: Test[] = [
     },
     maxN: 29,
   },
-  {
-    id: "two-sample-t-test",
+  "two-sample-t-test": {
     name: "2-Stichproben t-Test",
     info: "",
     accepts: {
@@ -53,8 +57,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "welchs-t-test",
+  "welchs-t-test": {
     name: "Welch-t-Test",
     info: "",
     accepts: {
@@ -69,8 +72,7 @@ export const tests: Test[] = [
     },
     aka: "Welchtest",
   },
-  {
-    id: "paired-t-test",
+  "paired-t-test": {
     name: "t-Test für abhängige Stichproben",
     info: "",
     accepts: {
@@ -83,8 +85,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "one-way-anova",
+  "one-way-anova": {
     name: "ANOVA einfaktoriell",
     info: "",
     accepts: {
@@ -95,8 +96,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "multi-factor-anova",
+  "multi-factor-anova": {
     name: "ANOVA mehrfaktoriell",
     info: "",
     accepts: {
@@ -107,8 +107,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "chi-square-test-variance",
+  "chi-square-test-variance": {
     name: "Chi^2 Test (X^2 Test)",
     info: "",
     accepts: {
@@ -118,8 +117,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "f-test",
+  "f-test": {
     name: "F-Test",
     info: "",
     accepts: {
@@ -130,8 +128,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "chi-square-goodness-of-fit-normal-polytomous",
+  "chi-square-goodness-of-fit-normal-polytomous": {
     name: "Chi^2 Anpassungstest (polytom) auf Normalverteilung",
     info: "",
     accepts: {
@@ -140,8 +137,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "wilcoxon-signed-rank-normal-approx",
+  "wilcoxon-signed-rank-normal-approx": {
     name: "Wilcoxon-Test (NV-Approximation)",
     info: "",
     accepts: {
@@ -154,8 +150,7 @@ export const tests: Test[] = [
     },
     minN: 26,
   },
-  {
-    id: "wilcoxon-signed-rank-tied-rank-approx",
+  "wilcoxon-signed-rank-tied-rank-approx": {
     name: "Wilcoxon-Test (Rangbindungs-Approximation)",
     info: "2 Datenreihen",
     accepts: {
@@ -169,8 +164,7 @@ export const tests: Test[] = [
     },
     maxN: 25,
   },
-  {
-    id: "wilcoxon-signed-rank-exact",
+  "wilcoxon-signed-rank-exact": {
     name: "Wilcoxon-Test",
     info: "2 Datenreihen",
     accepts: {
@@ -183,8 +177,7 @@ export const tests: Test[] = [
     },
     maxN: 25,
   },
-  {
-    id: "sign-test",
+  "sign-test": {
     name: "Vorzeichentest",
     info: "2 Datenreihen",
     accepts: {
@@ -195,8 +188,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "sign-test-normal-approx",
+  "sign-test-normal-approx": {
     name: "Vorzeichentest (NV-Approximation)",
     info: "2 Datenreihen",
     accepts: {
@@ -208,8 +200,7 @@ export const tests: Test[] = [
     },
     minN: 36,
   },
-  {
-    id: "mann-whitney-u-normal-approx",
+  "mann-whitney-u-normal-approx": {
     name: "Mann-Whitney-U-Test (NV-Approximation)",
     info: "2 Datenreihen",
     accepts: {
@@ -222,8 +213,7 @@ export const tests: Test[] = [
     },
     minN: 21,
   },
-  {
-    id: "mann-whitney-u-tied-rank-approx",
+  "mann-whitney-u-tied-rank-approx": {
     name: "Mann-Whitney-U-Test (Rangbindungs- Approximation)",
     info: "2 Datenreihen",
     accepts: {
@@ -237,8 +227,7 @@ export const tests: Test[] = [
     },
     maxN: 20,
   },
-  {
-    id: "mann-whitney-u-exact",
+  "mann-whitney-u-exact": {
     name: "Mann-Whitney-U-Test",
     info: "2 Datenreihen",
     accepts: {
@@ -252,8 +241,7 @@ export const tests: Test[] = [
     },
     maxN: 20,
   },
-  {
-    id: "binomial-test-normal-approx",
+  "binomial-test-normal-approx": {
     name: "Binomialtest mit NV-Approximation",
     info: "",
     accepts: {
@@ -265,8 +253,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "binomial-test-exact",
+  "binomial-test-exact": {
     name: "Binomialtest exakt",
     info: "",
     accepts: {
@@ -280,8 +267,7 @@ export const tests: Test[] = [
     },
     maxN: 20,
   },
-  {
-    id: "chi-square-goodness-of-fit-dichotomous",
+  "chi-square-goodness-of-fit-dichotomous": {
     name: "X²-Anpassungstest dichotom",
     info: "",
     accepts: {
@@ -294,8 +280,7 @@ export const tests: Test[] = [
     },
     minN: 10,
   },
-  {
-    id: "chi-square-goodness-of-fit-polytomous",
+  "chi-square-goodness-of-fit-polytomous": {
     name: "Χ² -Anpassungstest (polytom)",
     info: "",
     accepts: {
@@ -306,8 +291,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "mcnemars-test",
+  "mcnemars-test": {
     name: "Nc-Nemar-Test",
     info: "2 Datenreihen",
     accepts: {
@@ -319,8 +303,7 @@ export const tests: Test[] = [
     },
     minN: 30,
   },
-  {
-    id: "mcnemars-test-continuity-correction",
+  "mcnemars-test-continuity-correction": {
     name: "Nc-Nemar-Test (Kontinuitätskorrektur)",
     info: "2 Datenreihen",
     accepts: {
@@ -333,8 +316,7 @@ export const tests: Test[] = [
     minN: 20,
     maxN: 30,
   },
-  {
-    id: "cochrans-q-test",
+  "cochrans-q-test": {
     name: "Cochran's Q Test",
     info: "2 Datenreihen",
     accepts: {
@@ -345,8 +327,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "2x2-chi-square-goodness-of-fit",
+  "2x2-chi-square-goodness-of-fit": {
     name: "4-Felder-X²-Anpassungstest",
     info: "",
     accepts: {
@@ -357,8 +338,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "2x2-chi-square-independence",
+  "2x2-chi-square-independence": {
     name: "4-Felder-X²-Unabhängigkeitstest",
     info: "",
     accepts: {
@@ -369,8 +349,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "rxc-chi-square-test",
+  "rxc-chi-square-test": {
     name: "rxc-X²-Test",
     info: "",
     accepts: {
@@ -379,8 +358,7 @@ export const tests: Test[] = [
       researchQuestion: ["difference"],
     },
   },
-  {
-    id: "correlation-test-deviation-from-zero",
+  "correlation-test-deviation-from-zero": {
     name: "Korrelations-Test Abweichung von 0",
     info: "",
     accepts: {
@@ -390,8 +368,7 @@ export const tests: Test[] = [
       researchQuestion: ["relationship"],
     },
   },
-  {
-    id: "correlation-test-deviation-from-nonzero-value",
+  "correlation-test-deviation-from-nonzero-value": {
     name: "Korrelations-Test Abweichung von Wert ≠ 0",
     info: "",
     accepts: {
@@ -401,8 +378,7 @@ export const tests: Test[] = [
       researchQuestion: ["relationship"],
     },
   },
-  {
-    id: "two-sample-correlation-test",
+  "two-sample-correlation-test": {
     name: "2-Stichproben-Korrelations-Test",
     info: "",
     accepts: {
@@ -411,8 +387,7 @@ export const tests: Test[] = [
       researchQuestion: ["relationship"],
     },
   },
-  {
-    id: "spearman-correlation-test",
+  "spearman-correlation-test": {
     name: "Spearman-Korrelations-Test",
     info: "",
     accepts: {
@@ -420,8 +395,7 @@ export const tests: Test[] = [
       researchQuestion: ["relationship"],
     },
   },
-  {
-    id: "phi-coefficient",
+  "phi-coefficient": {
     name: "Punkt-4-Felder-Korrelation (Phi-Koeffizient)",
     info: "",
     accepts: {
@@ -430,8 +404,7 @@ export const tests: Test[] = [
       researchQuestion: ["relationship"],
     },
   },
-  {
-    id: "contingency-coefficient-c",
+  "contingency-coefficient-c": {
     name: "Kontingenz-Koeffizient C , über rxc-X²-Test",
     info: "",
     accepts: {
@@ -440,8 +413,7 @@ export const tests: Test[] = [
       researchQuestion: ["relationship"],
     },
   },
-  {
-    id: "cramers-v",
+  "cramers-v": {
     name: "Cramer's Index CI, über rxc-X²-Test",
     info: "",
     accepts: {
@@ -450,8 +422,7 @@ export const tests: Test[] = [
       researchQuestion: ["relationship"],
     },
   },
-  {
-    id: "point-biserial-correlation",
+  "point-biserial-correlation": {
     name: "Punkt-biserialer Korrelations-Test",
     info: "",
     accepts: {
@@ -460,8 +431,7 @@ export const tests: Test[] = [
       researchQuestion: ["relationship"],
     },
   },
-  {
-    id: "equivalence-test-independent-samples",
+  "equivalence-test-independent-samples": {
     name: "Äquivalenztest für unabh. Stichproben",
     info: "",
     accepts: {
@@ -471,8 +441,7 @@ export const tests: Test[] = [
       researchQuestion: ["equivalence"],
     },
   },
-  {
-    id: "equivalence-test-dependent-samples",
+  "equivalence-test-dependent-samples": {
     name: "Äquivalenztest für abhängige Stichproben",
     info: "",
     accepts: {
@@ -482,10 +451,9 @@ export const tests: Test[] = [
       researchQuestion: ["equivalence"],
     },
   },
-  {
-    // No measurementScale entry: the source listed every scale, which is the
-    // same as not caring.
-    id: "crutch-test-alpha-02",
+  // No measurementScale entry: the source listed every scale, which is the
+  // same as not caring.
+  "crutch-test-alpha-02": {
     name: "Krückentest mit α = 0,2",
     info: "",
     accepts: {
@@ -493,4 +461,19 @@ export const tests: Test[] = [
       researchQuestion: ["equivalence"],
     },
   },
-];
+} satisfies Record<string, Test>;
+
+/** The id of a test in the Catalog. */
+export type TestId = keyof typeof catalog;
+
+/** A Catalog entry together with its id — the form the matching engine takes. */
+export interface TestWithId extends Test {
+  id: TestId;
+}
+
+/** The Catalog as a list, in authoring order, for the matching engine. */
+export const tests: TestWithId[] = Object.entries(catalog).map(([id, entry]) => ({
+  // `Object.entries` widens keys to `string`; they are exactly `TestId`.
+  id: id as TestId,
+  ...entry,
+}));

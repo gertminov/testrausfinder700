@@ -73,3 +73,26 @@ export type TagOf<D extends Dimension> = Extract<Tag, { dimension: D }>;
 export type Accepts = {
   readonly [D in Dimension]?: readonly ValueOf<D>[];
 };
+
+/**
+ * The Criteria a student has selected: at most one value per Dimension, keyed by
+ * Dimension. Holding a single value rather than an array is what makes two
+ * contradictory values in one Dimension unrepresentable, instead of something
+ * the engine has to detect and reject.
+ */
+export type Selection = {
+  readonly [D in Dimension]?: ValueOf<D>;
+};
+
+/**
+ * A Selection as a list of Tags, for callers that want the list form. Ordered
+ * by the schema's Dimension order, so equal Selections give equal lists.
+ */
+export const selectionToTags = (selection: Selection): Tag[] =>
+  (Object.keys(dimensions) as Dimension[]).flatMap((dimension) => {
+    const value = selection[dimension];
+    // `selection[dimension]` is indexed by the whole `Dimension` union, so TS
+    // loses the pairing between the two; it holds because `value` was read
+    // from `dimension`'s own key.
+    return value === undefined ? [] : [{ dimension, value } as Tag];
+  });

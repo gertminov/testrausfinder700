@@ -1,4 +1,3 @@
-import {Matchable} from "@/lib/engine";
 
 /**
  * The shape a Dimension declaration must satisfy. The non-empty tuple is what
@@ -43,6 +42,9 @@ export const dimensions = {
 
 /** The name of a Dimension — a category of mutually-exclusive Criteria. */
 export type Dimension = keyof typeof dimensions;
+
+/** Every Dimension, in the schema's declaration order. */
+export const dimensionNames = Object.keys(dimensions) as Dimension[];
 
 /** The Criteria values one Dimension admits. */
 export type ValueOf<D extends Dimension> = (typeof dimensions)[D][number];
@@ -99,10 +101,44 @@ export const allTags: readonly Tag[] = (
  * by the schema's Dimension order, so equal Selections give equal lists.
  */
 export const selectionToTags = (selection: Selection): Tag[] =>
-  (Object.keys(dimensions) as Dimension[]).flatMap((dimension) => {
+  dimensionNames.flatMap((dimension) => {
     const value = selection[dimension];
     // `selection[dimension]` is indexed by the whole `Dimension` union, so TS
     // loses the pairing between the two; it holds because `value` was read
     // from `dimension`'s own key.
     return value === undefined ? [] : [{ dimension, value } as Tag];
   });
+
+/** `selection` with `tag` selected, replacing any value already selected in its Dimension. */
+export const withTag = (selection: Selection, tag: Tag): Selection => ({
+  ...selection,
+  [tag.dimension]: tag.value,
+});
+
+/** `selection` with nothing selected in `dimension`. */
+export const without = (selection: Selection, dimension: Dimension): Selection => {
+  const { [dimension]: _, ...rest } = selection;
+  return rest;
+};
+
+const isDimension = (key: string): key is Dimension => Object.hasOwn(dimensions, key);
+
+/**
+ * Reads a Selection out of URL search params. Keys that aren't Dimensions and
+ * values that Dimension doesn't admit are dropped, so a hand-edited or stale
+ * URL can't produce an invalid Selection. A repeated key keeps its first value.
+ */
+export const selectionFromSearchParams = (
+    params: Record<string,  string[]>,
+): Selection =>
+    Object.fromEntries(
+        Object.entries(params).flatMap(([key, raw]) => {
+            const value = Array.isArray(raw) ? raw[0] : raw;
+            if (!isDimension(key) || value === undefined) return [];
+            return (dimensions[key] as readonly string[]).includes(value) ? [[key, value]] : [];
+        }),
+    );
+
+/** The inverse of `selectionFromSearchParams`, in the schema's Dimension order. */
+export const selectionToSearchParams = (selection: Selection): URLSearchParams =>
+    new URLSearchParams(selectionToTags(selection).map(({dimension, value}) => [dimension, value]));

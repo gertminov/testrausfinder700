@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { findTests } from "./engine";
+import {Test} from "@/lib/tests";
 
 /**
  * A small hand-built Catalog. Ids are fixture-local; the engine only cares
@@ -24,11 +25,13 @@ const anyDependencyRank = {
   },
 } as const;
 const scaleAgnostic = {
+  name: "Scale-Agnostic",
+  info: "",
   id: "scale-agnostic",
   accepts: { sampleDependency: ["independent"] },
-} as const;
+} as const
 
-const catalog = [pairedT, twoSampleT, anyDependencyRank, scaleAgnostic];
+const catalog = [pairedT, twoSampleT, anyDependencyRank, scaleAgnostic] as (Test & {id: string})[]
 
 const ids = (tests: readonly { id: string }[]) => tests.map((t) => t.id);
 
@@ -101,7 +104,7 @@ describe("findTests", () => {
     const atLeast = { id: "at-least", accepts: {}, minN: 30 } as const;
     const atMost = { id: "at-most", accepts: {}, maxN: 9 } as const;
     const unbounded = { id: "unbounded", accepts: {} } as const;
-    const sized = [bounded, atLeast, atMost, unbounded];
+    const sized = [bounded, atLeast, atMost, unbounded] as Test[];
 
     const possibleAt = (sampleSize: number) =>
       ids(findTests(sized, {}, sampleSize).possibleTests);
@@ -133,7 +136,7 @@ describe("findTests", () => {
     it("requires a test to pass both the Criteria and the sample size", () => {
       const smallPaired = { ...pairedT, id: "small-paired", maxN: 29 } as const;
       const result = findTests(
-        [smallPaired, pairedT, twoSampleT],
+        [smallPaired, pairedT, twoSampleT] as unknown as Test[],
         { sampleDependency: "dependent" },
         50,
       );
@@ -145,9 +148,9 @@ describe("findTests", () => {
     it("offers each discriminating Dimension with the values tagged on Eligible tests, in schema order", () => {
       expect(findTests(catalog, {}).possibleCriteria).toEqual([
         { dimension: "measurementScale", value: "interval" },
-        { dimension: "measurementScale", value: "ordinal" },
-        { dimension: "sampleDependency", value: "dependent" },
-        { dimension: "sampleDependency", value: "independent" },
+        { id: "measurementScale", value: "ordinal" },
+        { id: "sampleDependency", value: "dependent" },
+        { id: "sampleDependency", value: "independent" },
       ]);
     });
 
@@ -157,7 +160,7 @@ describe("findTests", () => {
       const result = findTests(catalog, { sampleDependency: "dependent" });
       expect(result.possibleCriteria).toEqual([
         { dimension: "measurementScale", value: "interval" },
-        { dimension: "measurementScale", value: "ordinal" },
+        { id: "measurementScale", value: "ordinal" },
       ]);
     });
 
@@ -178,7 +181,7 @@ describe("findTests", () => {
         twoGroupParametric,
         twoGroupNonparametric,
         manyGroupNonparametric,
-      ];
+      ] as unknown as Test[];
 
       // Only two-group-parametric is left, so groupCount can't narrow further.
       expect(
@@ -189,7 +192,7 @@ describe("findTests", () => {
         findTests(groups, { testFamily: "nonparametric" }).possibleCriteria,
       ).toEqual([
         { dimension: "groupCount", value: "two" },
-        { dimension: "groupCount", value: "moreThanTwo" },
+        { id: "groupCount", value: "moreThanTwo" },
       ]);
     });
 
@@ -199,10 +202,10 @@ describe("findTests", () => {
       const tests = [
         { id: "two-or-more", accepts: { groupCount: ["two", "moreThanTwo"] } },
         { id: "only-two", accepts: { groupCount: ["two"] } },
-      ] as const;
+      ] as unknown as Test[];
       expect(findTests(tests, {}).possibleCriteria).toEqual([
         { dimension: "groupCount", value: "two" },
-        { dimension: "groupCount", value: "moreThanTwo" },
+        { id: "groupCount", value: "moreThanTwo" },
       ]);
     });
 
@@ -220,12 +223,12 @@ describe("findTests", () => {
           id: "z",
           accepts: { testFamily: ["nonparametric"], groupCount: ["one"] },
         },
-      ] as const;
+      ] as unknown as Test[];
       expect(
         findTests(tests, { testFamily: "parametric" }).possibleCriteria,
       ).toEqual([
         { dimension: "groupCount", value: "two" },
-        { dimension: "groupCount", value: "moreThanTwo" },
+        { id: "groupCount", value: "moreThanTwo" },
       ]);
     });
 
@@ -244,7 +247,7 @@ describe("findTests", () => {
             groupCount: ["moreThanTwo"],
           },
         },
-      ] as const;
+      ] as unknown as Test[];
       expect(
         findTests(tests, { testFamily: "parametric" }).possibleCriteria,
       ).toEqual([]);
@@ -254,10 +257,10 @@ describe("findTests", () => {
       const tests = [
         { id: "small", accepts: { testFamily: ["parametric"] }, maxN: 29 },
         { id: "large", accepts: { testFamily: ["nonparametric"] }, minN: 30 },
-      ] as const;
+      ] as unknown as Test[];
       expect(findTests(tests, {}).possibleCriteria).toEqual([
         { dimension: "testFamily", value: "parametric" },
-        { dimension: "testFamily", value: "nonparametric" },
+        { id: "testFamily", value: "nonparametric" },
       ]);
       expect(findTests(tests, {}, 50).possibleCriteria).toEqual([]);
     });

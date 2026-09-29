@@ -1,30 +1,11 @@
-import {
-  type Accepts, allTags,
-  type Dimension,
-  dimensions,
-  type Selection,
-  selectionToTags,
-  type Tag,
-  type TagOf,
-} from "./dimensions";
+import {allTags, type Dimension, type Selection, selectionToTags, type Tag, type TagOf,} from "./dimensions";
+import {Test} from "@/lib/tests";
 
-/**
- * What the engine needs from a Catalog entry. Structural rather than
- * `TestWithId`, so fixture Catalogs in tests need not use real `TestId`s; the
- * entries come back out with their full type intact.
- */
-export interface Matchable {
-  readonly accepts: Accepts;
-  readonly minN?: number;
-  readonly maxN?: number;
-}
 
-export interface MatchResult<T extends Matchable> {
-  /** The input Selection, echoed back unchanged. */
+export interface MatchResult {
   selectedCriteria: Selection;
-  /** The Eligible tests, in Catalog order. */
-  possibleTests: T[];
-  /** The Tags still worth offering: each one would narrow `possibleTests`. */
+  possibleTests: Test[];
+  /** The Tags still worth offering*/
   possibleCriteria: Tag[];
 }
 
@@ -32,38 +13,65 @@ export interface MatchResult<T extends Matchable> {
  * The matching engine: which tests are still Eligible given what the student
  * knows, and which further Criteria would narrow them.
  */
-export const findTests = <T extends Matchable>(
-  catalog: readonly T[],
+export const findTests = (
+  catalog: readonly Test[],
   selection: Selection,
   sampleSize?: number,
-): MatchResult<T> => {
-  const selected = selectionToTags(selection);
-  const possibleTests = catalog.filter(
-    (test) =>
-      selected.every((tag) => accepts(test, tag)) &&
-      fitsSampleSize(test, sampleSize),
-  );
-  const candidates = allTags.filter(
-    (tag) =>
-      selection[tag.dimension] === undefined &&
-      possibleTests.some((test) => isTaggedWith(test, tag)),
-  );
-  // A Dimension is worth offering only if at least one of its candidate values
-  // would Exclude some Eligible test; otherwise every answer changes nothing.
-  const discriminating = new Set(
-    candidates
-      .filter((tag) => possibleTests.some((test) => !accepts(test, tag)))
-      .map((tag) => tag.dimension),
-  );
-  return {
-    selectedCriteria: selection,
-    possibleTests,
-    possibleCriteria: candidates.filter((tag) =>
-      discriminating.has(tag.dimension),
-    ),
-  };
+): MatchResult => {
+  const possibleTests = eligibleTests(catalog, selection, sampleSize);
+  const possibleCriteria = narrowingCriteria(possibleTests, selection);
+  return { selectedCriteria: selection, possibleTests, possibleCriteria };
 };
 
+/** The tests in the Catalog that no selected Criterion or sample size Excludes. */
+const eligibleTests = (
+  catalog: readonly Test[],
+  selection: Selection,
+  sampleSize: number | undefined,
+): Test[] => {
+  const selectedTags = selectionToTags(selection);
+  return catalog.filter((test) => isEligible(test, selectedTags, sampleSize));
+};
+
+/**
+ * The Tags still worth offering: offerable Tags in an unanswered Dimension
+ * where at least one value would Exclude some Eligible test. Otherwise every
+ * answer in that Dimension changes nothing, so none of its Tags are offered.
+ */
+const narrowingCriteria = (
+  eligible: readonly Test[],
+  selection: Selection,
+): Tag[] => {
+  const offerable = allTags.filter(
+    (tag) =>
+      isUnanswered(selection, tag.dimension) && isOfferable(tag, eligible),
+  );
+  const narrowingDimensions = new Set(
+    offerable
+      .filter((tag) => wouldExclude(tag, eligible))
+      .map((tag) => tag.dimension),
+  );
+  return offerable.filter((tag) => narrowingDimensions.has(tag.dimension));
+};
+
+const isEligible = (
+  test: Test,
+  selectedTags: readonly Tag[],
+  sampleSize: number | undefined,
+): boolean =>
+  selectedTags.every((tag) => accepts(test, tag)) &&
+  fitsSampleSize(test, sampleSize);
+
+const isUnanswered = (selection: Selection, dimension: Dimension): boolean =>
+  selection[dimension] === undefined;
+
+/** Whether some Eligible test explicitly carries the Tag. */
+const isOfferable = (tag: Tag, eligible: readonly Test[]): boolean =>
+  eligible.some((test) => isTaggedWith(test, tag));
+
+/** Whether selecting the Tag would Exclude at least one Eligible test. */
+const wouldExclude = (tag: Tag, eligible: readonly Test[]): boolean =>
+  eligible.some((test) => !accepts(test, tag));
 
 /**
  * Whether a sample size lies within a test's inclusive `[minN, maxN]`. A
@@ -71,7 +79,7 @@ export const findTests = <T extends Matchable>(
  * nothing.
  */
 const fitsSampleSize = (
-  { minN = -Infinity, maxN = Infinity }: Matchable,
+  { minN = -Infinity, maxN = Infinity }: Test,
   sampleSize: number | undefined,
 ): boolean =>
   sampleSize === undefined || (minN <= sampleSize && sampleSize <= maxN);
@@ -80,7 +88,7 @@ const fitsSampleSize = (
  * Whether a test survives one selected Criterion. A test with no tag in the
  * Tag's Dimension doesn't care about it, so is never Excluded on it.
  */
-const accepts = (test: Matchable, tag: Tag): boolean =>
+const accepts = (test: Test, tag: Tag): boolean =>
   test.accepts[tag.dimension] === undefined || isTaggedWith(test, tag);
 
 /**
@@ -91,6 +99,6 @@ const accepts = (test: Matchable, tag: Tag): boolean =>
  * Dimension's list, and `includes` on that union takes `never`.
  */
 const isTaggedWith = <D extends Dimension>(
-  test: Matchable,
+  test: Test,
   tag: TagOf<D>,
 ): boolean => test.accepts[tag.dimension]?.includes(tag.value) ?? false;

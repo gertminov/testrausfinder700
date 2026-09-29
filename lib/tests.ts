@@ -1,14 +1,6 @@
 import type {Accepts} from "./dimensions";
 
-/** One Catalog entry. Its id is the key it is filed under in `catalog`. */
-interface Test {
-    name: string;
-    info: string;
-    accepts: Accepts;
-    minN?: number;
-    maxN?: number;
-    aka?: string;
-}
+
 
 /**
  * The Catalog, keyed by test id. Keying by id is what makes a duplicate id a
@@ -17,7 +9,7 @@ interface Test {
  *
  * `satisfies` rather than a type annotation, so the literal keys survive.
  */
-export const catalog = {
+export const catalog = withIds({
     "gauss-test": {
         name: "Gauss-Test",
         info: "Das ist der Gauss Test, er Gausst sehr viel und ist auch sonst echt toll",
@@ -461,19 +453,27 @@ export const catalog = {
             researchQuestion: ["equivalence"],
         },
     },
-} satisfies Record<string, Test>;
+}) satisfies Record<string, Test>;
 
 /** The id of a test in the Catalog. */
 export type TestId = keyof typeof catalog;
 
-/** A Catalog entry together with its id — the form the matching engine takes. */
-export interface TestWithId extends Test {
-    id: TestId;
+/** The Catalog as a list, in authoring order, for the matching engine. */
+export const allTests: Test[] = Object.values(catalog)
+
+/** One Catalog entry. Its id is the key it is filed under in `catalog`. */
+export interface Test {
+    name: string;
+    info: string;
+    id: string;
+    accepts: Accepts;
+    minN?: number;
+    maxN?: number;
+    aka?: string;
 }
 
-/** The Catalog as a list, in authoring order, for the matching engine. */
-export const tests: TestWithId[] = Object.entries(catalog).map(([id, entry]) => ({
-    // `Object.entries` widens keys to `string`; they are exactly `TestId`.
-    id: id as TestId,
-    ...entry,
-}));
+function withIds<T extends Record<string, Omit<Test, "id">>>(entries: T): { [K in keyof T]: T[K] & { id: K } } {
+    return Object.fromEntries(
+        Object.entries(entries).map(([id, entry]) => [id, { ...entry, id }]),
+    ) as { [K in keyof T]: T[K] & { id: K } };
+}

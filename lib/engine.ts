@@ -5,6 +5,7 @@ import {
   type Selection,
   selectionToTags,
   type Tag,
+  type TagOf,
 } from "./dimensions";
 
 /**
@@ -29,8 +30,7 @@ export interface MatchResult<T extends Matchable> {
 
 /**
  * The matching engine: which tests are still Eligible given what the student
- * knows, and which further Criteria would narrow them. Pure — no I/O, no
- * framework — so it runs the same in a component, an API route or a script.
+ * knows, and which further Criteria would narrow them.
  */
 export const findTests = <T extends Matchable>(
   catalog: readonly T[],
@@ -88,17 +88,16 @@ const fitsSampleSize = (
  * Tag's Dimension doesn't care about it, so is never Excluded on it.
  */
 const accepts = (test: Matchable, tag: Tag): boolean =>
-  valuesIn(test, tag) === undefined || isTaggedWith(test, tag);
+  test.accepts[tag.dimension] === undefined || isTaggedWith(test, tag);
 
-/** Whether a test explicitly carries a Tag, as opposed to not caring. */
-const isTaggedWith = (test: Matchable, tag: Tag): boolean =>
-  valuesIn(test, tag)?.includes(tag.value) ?? false;
-
-/** The values a test accepts in a Tag's Dimension, if it has any there. */
-const valuesIn = (
+/**
+ * Whether a test explicitly carries a Tag, as opposed to not caring.
+ *
+ * Generic over the Dimension so `accepts[tag.dimension]` is that one
+ * Dimension's list: indexed by a plain `Tag`, it would be the union of every
+ * Dimension's list, and `includes` on that union takes `never`.
+ */
+const isTaggedWith = <D extends Dimension>(
   test: Matchable,
-  { dimension }: Tag,
-): readonly string[] | undefined =>
-  // Indexing by the whole `Dimension` union widens the list's element type to
-  // every Dimension's values, so `includes` needs the wider type spelled out.
-  test.accepts[dimension];
+  tag: TagOf<D>,
+): boolean => test.accepts[tag.dimension]?.includes(tag.value) ?? false;

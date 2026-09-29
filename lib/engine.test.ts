@@ -95,4 +95,49 @@ describe("findTests", () => {
       expect(result.possibleTests).toEqual([]);
     });
   });
+
+  describe("sample size", () => {
+    const bounded = { id: "bounded", accepts: {}, minN: 10, maxN: 29 } as const;
+    const atLeast = { id: "at-least", accepts: {}, minN: 30 } as const;
+    const atMost = { id: "at-most", accepts: {}, maxN: 9 } as const;
+    const unbounded = { id: "unbounded", accepts: {} } as const;
+    const sized = [bounded, atLeast, atMost, unbounded];
+
+    const possibleAt = (sampleSize: number) =>
+      ids(findTests(sized, {}, sampleSize).possibleTests);
+
+    it("keeps a test when the sample size sits exactly on a bound", () => {
+      expect(possibleAt(10)).toContain("bounded");
+      expect(possibleAt(29)).toContain("bounded");
+    });
+
+    it("excludes a test when the sample size falls just outside a bound", () => {
+      expect(possibleAt(9)).not.toContain("bounded");
+      expect(possibleAt(30)).not.toContain("bounded");
+    });
+
+    it("treats a missing bound as unbounded on that side", () => {
+      expect(possibleAt(1_000_000)).toEqual(["at-least", "unbounded"]);
+      expect(possibleAt(1)).toEqual(["at-most", "unbounded"]);
+    });
+
+    it("never excludes a bounded test when no sample size is given", () => {
+      expect(ids(findTests(sized, {}).possibleTests)).toEqual([
+        "bounded",
+        "at-least",
+        "at-most",
+        "unbounded",
+      ]);
+    });
+
+    it("requires a test to pass both the Criteria and the sample size", () => {
+      const smallPaired = { ...pairedT, id: "small-paired", maxN: 29 } as const;
+      const result = findTests(
+        [smallPaired, pairedT, twoSampleT],
+        { sampleDependency: "dependent" },
+        50,
+      );
+      expect(ids(result.possibleTests)).toEqual(["paired-t"]);
+    });
+  });
 });

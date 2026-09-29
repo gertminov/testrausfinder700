@@ -33,17 +33,30 @@ export interface MatchResult<T extends Matchable> {
 export const findTests = <T extends Matchable>(
   catalog: readonly T[],
   selection: Selection,
-  _sampleSize?: number,
+  sampleSize?: number,
 ): MatchResult<T> => {
   const selected = selectionToTags(selection);
   return {
     selectedCriteria: selection,
-    possibleTests: catalog.filter((test) =>
-      selected.every((tag) => accepts(test, tag)),
+    possibleTests: catalog.filter(
+      (test) =>
+        selected.every((tag) => accepts(test, tag)) &&
+        fitsSampleSize(test, sampleSize),
     ),
     possibleCriteria: [],
   };
 };
+
+/**
+ * Whether a sample size lies within a test's inclusive `[minN, maxN]`. A
+ * missing bound is unbounded on that side, and an unknown sample size Excludes
+ * nothing.
+ */
+const fitsSampleSize = (
+  { minN = -Infinity, maxN = Infinity }: Matchable,
+  sampleSize: number | undefined,
+): boolean =>
+  sampleSize === undefined || (minN <= sampleSize && sampleSize <= maxN);
 
 /**
  * Whether a test survives one selected Criterion. A test with no tag in the

@@ -1,5 +1,7 @@
 import {
   type Accepts,
+  type Dimension,
+  dimensions,
   type Selection,
   selectionToTags,
   type Tag,
@@ -36,16 +38,39 @@ export const findTests = <T extends Matchable>(
   sampleSize?: number,
 ): MatchResult<T> => {
   const selected = selectionToTags(selection);
+  const possibleTests = catalog.filter(
+    (test) =>
+      selected.every((tag) => accepts(test, tag)) &&
+      fitsSampleSize(test, sampleSize),
+  );
+  const candidates = allTags.filter(
+    (tag) =>
+      selection[tag.dimension] === undefined &&
+      possibleTests.some((test) => isTaggedWith(test, tag)),
+  );
+  // A Dimension is worth offering only if at least one of its candidate values
+  // would Exclude some Eligible test; otherwise every answer changes nothing.
+  const discriminating = new Set(
+    candidates
+      .filter((tag) => possibleTests.some((test) => !accepts(test, tag)))
+      .map((tag) => tag.dimension),
+  );
   return {
     selectedCriteria: selection,
-    possibleTests: catalog.filter(
-      (test) =>
-        selected.every((tag) => accepts(test, tag)) &&
-        fitsSampleSize(test, sampleSize),
+    possibleTests,
+    possibleCriteria: candidates.filter((tag) =>
+      discriminating.has(tag.dimension),
     ),
-    possibleCriteria: [],
   };
 };
+
+/** Every Tag the schema declares, in Dimension order, then value order. */
+const allTags: readonly Tag[] = (
+  Object.entries(dimensions) as [Dimension, readonly string[]][]
+).flatMap(([dimension, values]) =>
+  // The pairing holds because `values` was read from `dimension`'s own key.
+  values.map((value) => ({ dimension, value }) as Tag),
+);
 
 /**
  * Whether a sample size lies within a test's inclusive `[minN, maxN]`. A
@@ -62,9 +87,18 @@ const fitsSampleSize = (
  * Whether a test survives one selected Criterion. A test with no tag in the
  * Tag's Dimension doesn't care about it, so is never Excluded on it.
  */
-const accepts = (test: Matchable, { dimension, value }: Tag): boolean => {
+const accepts = (test: Matchable, tag: Tag): boolean =>
+  valuesIn(test, tag) === undefined || isTaggedWith(test, tag);
+
+/** Whether a test explicitly carries a Tag, as opposed to not caring. */
+const isTaggedWith = (test: Matchable, tag: Tag): boolean =>
+  valuesIn(test, tag)?.includes(tag.value) ?? false;
+
+/** The values a test accepts in a Tag's Dimension, if it has any there. */
+const valuesIn = (
+  test: Matchable,
+  { dimension }: Tag,
+): readonly string[] | undefined =>
   // Indexing by the whole `Dimension` union widens the list's element type to
   // every Dimension's values, so `includes` needs the wider type spelled out.
-  const values: readonly string[] | undefined = test.accepts[dimension];
-  return values === undefined || values.includes(value);
-};
+  test.accepts[dimension];

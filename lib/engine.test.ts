@@ -140,4 +140,113 @@ describe("findTests", () => {
       expect(ids(result.possibleTests)).toEqual(["paired-t"]);
     });
   });
+
+  describe("possible criteria", () => {
+    it("offers each discriminating Dimension with the values tagged on Eligible tests, in schema order", () => {
+      expect(findTests(catalog, {}).possibleCriteria).toEqual([
+        { dimension: "measurementScale", value: "interval" },
+        { dimension: "measurementScale", value: "ordinal" },
+        { dimension: "sampleDependency", value: "dependent" },
+        { dimension: "sampleDependency", value: "independent" },
+      ]);
+    });
+
+    it("never re-offers a Dimension that already has a selected value", () => {
+      // any-dependency-rank still carries `independent`, so only the
+      // selection itself keeps sampleDependency out.
+      const result = findTests(catalog, { sampleDependency: "dependent" });
+      expect(result.possibleCriteria).toEqual([
+        { dimension: "measurementScale", value: "interval" },
+        { dimension: "measurementScale", value: "ordinal" },
+      ]);
+    });
+
+    it("drops a Dimension once every Eligible test agrees on it", () => {
+      const twoGroupParametric = {
+        id: "two-group-parametric",
+        accepts: { groupCount: ["two"], testFamily: ["parametric"] },
+      } as const;
+      const twoGroupNonparametric = {
+        id: "two-group-nonparametric",
+        accepts: { groupCount: ["two"], testFamily: ["nonparametric"] },
+      } as const;
+      const manyGroupNonparametric = {
+        id: "many-group-nonparametric",
+        accepts: { groupCount: ["moreThanTwo"], testFamily: ["nonparametric"] },
+      } as const;
+      const groups = [
+        twoGroupParametric,
+        twoGroupNonparametric,
+        manyGroupNonparametric,
+      ];
+
+      // Only two-group-parametric is left, so groupCount can't narrow further.
+      expect(
+        findTests(groups, { testFamily: "parametric" }).possibleCriteria,
+      ).toEqual([]);
+      // Two tests left that differ on groupCount: it still narrows.
+      expect(
+        findTests(groups, { testFamily: "nonparametric" }).possibleCriteria,
+      ).toEqual([
+        { dimension: "groupCount", value: "two" },
+        { dimension: "groupCount", value: "moreThanTwo" },
+      ]);
+    });
+
+    it("doesn't offer a value tagged only on Excluded tests", () => {
+      const tests = [
+        {
+          id: "x",
+          accepts: { testFamily: ["parametric"], groupCount: ["two"] },
+        },
+        {
+          id: "y",
+          accepts: { testFamily: ["parametric"], groupCount: ["moreThanTwo"] },
+        },
+        {
+          id: "z",
+          accepts: { testFamily: ["nonparametric"], groupCount: ["one"] },
+        },
+      ] as const;
+      expect(
+        findTests(tests, { testFamily: "parametric" }).possibleCriteria,
+      ).toEqual([
+        { dimension: "groupCount", value: "two" },
+        { dimension: "groupCount", value: "moreThanTwo" },
+      ]);
+    });
+
+    it("treats a test with no tag in a Dimension as accepting any value there", () => {
+      // Selecting `two` would keep `untagged`, so groupCount narrows nothing.
+      const tests = [
+        {
+          id: "tagged",
+          accepts: { testFamily: ["parametric"], groupCount: ["two"] },
+        },
+        { id: "untagged", accepts: { testFamily: ["parametric"] } },
+        {
+          id: "other",
+          accepts: {
+            testFamily: ["nonparametric"],
+            groupCount: ["moreThanTwo"],
+          },
+        },
+      ] as const;
+      expect(
+        findTests(tests, { testFamily: "parametric" }).possibleCriteria,
+      ).toEqual([]);
+    });
+
+    it("computes relevance over the tests the sample size leaves Eligible", () => {
+      const tests = [
+        { id: "small", accepts: { testFamily: ["parametric"] }, maxN: 29 },
+        { id: "large", accepts: { testFamily: ["nonparametric"] }, minN: 30 },
+      ] as const;
+      expect(findTests(tests, {}).possibleCriteria).toEqual([
+        { dimension: "testFamily", value: "parametric" },
+        { dimension: "testFamily", value: "nonparametric" },
+      ]);
+      expect(findTests(tests, {}, 50).possibleCriteria).toEqual([]);
+    });
+  });
 });

@@ -193,6 +193,19 @@ describe("findTests", () => {
       ]);
     });
 
+    it("keeps a Dimension while any of its values narrows, offering all of them", () => {
+      // Selecting `two` Excludes nothing, but `moreThanTwo` Excludes
+      // only-two, so groupCount still narrows and both values are offered.
+      const tests = [
+        { id: "two-or-more", accepts: { groupCount: ["two", "moreThanTwo"] } },
+        { id: "only-two", accepts: { groupCount: ["two"] } },
+      ] as const;
+      expect(findTests(tests, {}).possibleCriteria).toEqual([
+        { dimension: "groupCount", value: "two" },
+        { dimension: "groupCount", value: "moreThanTwo" },
+      ]);
+    });
+
     it("doesn't offer a value tagged only on Excluded tests", () => {
       const tests = [
         {

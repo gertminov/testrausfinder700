@@ -1,5 +1,5 @@
 import {
-  type Accepts,
+  type Accepts, allTags,
   type Dimension,
   dimensions,
   type Selection,
@@ -64,13 +64,6 @@ export const findTests = <T extends Matchable>(
   };
 };
 
-/** Every Tag the schema declares, in Dimension order, then value order. */
-const allTags: readonly Tag[] = (
-  Object.entries(dimensions) as [Dimension, readonly string[]][]
-).flatMap(([dimension, values]) =>
-  // The pairing holds because `values` was read from `dimension`'s own key.
-  values.map((value) => ({ dimension, value }) as Tag),
-);
 
 /**
  * Whether a sample size lies within a test's inclusive `[minN, maxN]`. A
@@ -91,7 +84,7 @@ const accepts = (test: Matchable, tag: Tag): boolean =>
   test.accepts[tag.dimension] === undefined || isTaggedWith(test, tag);
 
 /**
- * Whether a test explicitly carries a Tag, as opposed to not caring.
+ * Whether a test explicitly carries a Tag
  *
  * Generic over the Dimension so `accepts[tag.dimension]` is that one
  * Dimension's list: indexed by a plain `Tag`, it would be the union of every

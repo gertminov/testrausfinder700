@@ -1,3 +1,5 @@
+import {Matchable} from "@/lib/engine";
+
 /**
  * The shape a Dimension declaration must satisfy. The non-empty tuple is what
  * rejects a Dimension declared with no values; it is exported so the type tests
@@ -83,6 +85,14 @@ export type Accepts = {
 export type Selection = {
   readonly [D in Dimension]?: ValueOf<D>;
 };
+
+
+export const allTags: readonly Tag[] = (
+    Object.entries(dimensions)
+).flatMap(([dimension, values]) =>
+    // The pairing holds because `values` was read from `dimension`'s own key.
+    values.map((value) => ({ dimension, value }) as Tag),
+);
 
 /**
  * A Selection as a list of Tags, for callers that want the list form. Ordered

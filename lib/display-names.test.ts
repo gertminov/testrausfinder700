@@ -20,21 +20,19 @@ describe("dimensionName", () => {
 });
 
 describe("dimensionHint", () => {
-  it("explains a Dimension whose name alone isn't enough", () => {
+  it("explains what a Dimension asks", () => {
     expect(dimensionHint("normalApproximationValid")).toBe(
       "Normal approximation of the binomial holds when n·p·q > 9",
     );
   });
-
-  it("is absent where the name speaks for itself", () => {
-    expect(dimensionHint("groupCount")).toBeUndefined();
-  });
 });
 
 describe("Display names", () => {
-  it("name every Dimension and every Criterion", () => {
-    for (const dimension of dimensionNames)
+  it("name and explain every Dimension, and name every Criterion", () => {
+    for (const dimension of dimensionNames) {
       expect(dimensionName(dimension), dimension).toMatch(/\S/);
+      expect(dimensionHint(dimension), dimension).toMatch(/\S/);
+    }
     for (const tag of allTags)
       expect(criterionName(tag), `${tag.dimension}=${tag.value}`).toMatch(/\S/);
   });

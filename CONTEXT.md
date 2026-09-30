@@ -17,7 +17,7 @@ A Dimension paired with one of that Dimension's values, declaring one Criterion 
 _Avoid_: label, flag
 
 **Display name**:
-The wording a student reads for a Dimension or a Criterion (e.g. "Number of groups" for the Dimension, "Two" for one of its Criteria). Distinct from the key, which is the stable identifier and what deep links carry; rewording a Display name never breaks a link. A Criterion's Display name belongs to its Dimension — the same key in two Dimensions can read differently. A Dimension may also carry a short hint explaining it, where the name alone isn't enough.
+The wording a student reads for a Dimension or a Criterion (e.g. "Number of groups" for the Dimension, "Two" for one of its Criteria). Distinct from the key, which is the stable identifier and what deep links carry; rewording a Display name never breaks a link. A Criterion's Display name belongs to its Dimension — the same key in two Dimensions can read differently. Every Dimension also carries a short hint explaining what it asks.
 _Avoid_: label (overloaded with Tag), title
 
 **Catalog**:

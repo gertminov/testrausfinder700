@@ -1,14 +1,14 @@
 import type { Dimension, Tag, ValueOf } from "./dimensions";
 
 /**
- * What a student reads for one Dimension: its Display name, an optional hint
- * where the name alone isn't enough, and the Display name of each Criterion.
+ * What a student reads for one Dimension: its Display name, a short hint
+ * explaining what it asks, and the Display name of each Criterion.
  * `values` is keyed by the Dimension's own Criteria, so a missing or stray
  * value is a compile error.
  */
 type DimensionDisplay<D extends Dimension> = {
   readonly name: string;
-  readonly hint?: string;
+  readonly hint: string;
   readonly values: { readonly [V in ValueOf<D>]: string };
 };
 
@@ -24,10 +24,12 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   independentVariableScale: {
     name: "Independent variable scale",
+    hint: "Scale level of the independent variable",
     values: { interval: "Interval", ordinal: "Ordinal", nominal: "Nominal" },
   },
   researchQuestion: {
     name: "Research question",
+    hint: "What the hypothesis is about",
     values: {
       difference: "Difference",
       relationship: "Relationship",
@@ -36,14 +38,17 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   populationVariance: {
     name: "Population variance",
+    hint: "Is the population variance given, rather than estimated from the sample?",
     values: { known: "Known", unknown: "Unknown" },
   },
   sampleDependency: {
     name: "Samples",
+    hint: "Paired means the same subjects measured twice, or matched pairs",
     values: { dependent: "Dependent (paired)", independent: "Independent" },
   },
   groupCount: {
     name: "Number of groups",
+    hint: "How many samples are compared",
     values: {
       one: "One",
       two: "Two",
@@ -53,18 +58,22 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   testFamily: {
     name: "Test type",
+    hint: "Parametric tests assume a distribution, e.g. normality",
     values: { parametric: "Parametric", nonparametric: "Non-parametric" },
   },
   rankTies: {
     name: "Tied ranks",
+    hint: "Do several observations share the same rank?",
     values: { present: "Present", absent: "Absent" },
   },
   varianceHomogeneity: {
     name: "Variances",
+    hint: "Are the variances equal across the groups' populations?",
     values: { homogeneous: "Equal", heterogeneous: "Unequal" },
   },
   differenceRegarding: {
     name: "Difference in",
+    hint: "Which property of the samples is compared",
     values: {
       mean: "Mean",
       variance: "Variance",
@@ -73,6 +82,7 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   categoryCount: {
     name: "Categories",
+    hint: "How many categories the nominal variable has",
     values: {
       dichotomous: "Dichotomous (2)",
       polytomous: "Polytomous (> 2)",
@@ -85,22 +95,27 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   equivalenceEstablished: {
     name: "Equivalence established",
+    hint: "Has an expert set an equivalence range ±Δ?",
     values: { yes: "Yes", no: "No" },
   },
   correlationHypothesis: {
     name: "Hypothesised correlation",
+    hint: "The population correlation ρ the null hypothesis assumes",
     values: { zero: "ρ = 0", nonzero: "ρ ≠ 0" },
   },
   factorCount: {
     name: "Number of factors",
+    hint: "How many independent variables group the data",
     values: { one: "One", two: "Two" },
   },
   dataSeriesCount: {
     name: "Data series",
+    hint: "How many measured variables go into the test",
     values: { two: "Two" },
   },
   expectedCellFrequency: {
     name: "Expected cell frequencies",
+    hint: "Expected frequency e = n·π in each category",
     values: { atMost10: "≤ 10", above10: "> 10" },
   },
   normalApproximationValid: {
@@ -120,6 +135,6 @@ export const criterionName = (tag: Tag): string =>
 export const dimensionName = (dimension: Dimension): string =>
   displayNames[dimension].name;
 
-/** A short explanation of a Dimension, where its name alone isn't enough. */
-export const dimensionHint = (dimension: Dimension): string | undefined =>
+/** A short explanation of what a Dimension asks. */
+export const dimensionHint = (dimension: Dimension): string =>
   displayNames[dimension].hint;

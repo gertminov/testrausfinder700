@@ -1,9 +1,17 @@
-import {allTags, type Dimension, type Selection, selectionToTags, type Tag, type TagOf,} from "./dimensions";
-import {Test} from "@/lib/tests";
-
+import {
+  allTags,
+  type Dimension,
+  type Selection,
+  selectionToTags,
+  type Tag,
+  type TagOf,
+} from "./dimensions";
+import { Test } from "@/lib/tests";
 
 export interface MatchResult {
   selectedCriteria: Selection;
+  /** The sample size the tests were checked against, if any. */
+  sampleSize?: number;
   possibleTests: Test[];
   /** The Tags still worth offering*/
   possibleCriteria: Tag[];
@@ -20,7 +28,12 @@ export const findTests = (
 ): MatchResult => {
   const possibleTests = eligibleTests(catalog, selection, sampleSize);
   const possibleCriteria = narrowingCriteria(possibleTests, selection);
-  return { selectedCriteria: selection, possibleTests, possibleCriteria };
+  return {
+    selectedCriteria: selection,
+    sampleSize,
+    possibleTests,
+    possibleCriteria,
+  };
 };
 
 /** The tests in the Catalog that no selected Criterion or sample size Excludes. */

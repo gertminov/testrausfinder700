@@ -128,3 +128,8 @@
     @apply font-sans;
   }
 }
+/* Show only the scroll thumb — no track/gutter behind it. */
+@utility scrollbar-thumb-only {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}

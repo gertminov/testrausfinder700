@@ -1,4 +1,3 @@
-
 /**
  * The shape a Dimension declaration must satisfy. The non-empty tuple is what
  * rejects a Dimension declared with no values; it is exported so the type tests
@@ -88,10 +87,8 @@ export type Selection = {
   readonly [D in Dimension]?: ValueOf<D>;
 };
 
-
-export const allTags: readonly Tag[] = (
-    Object.entries(dimensions)
-).flatMap(([dimension, values]) =>
+export const allTags: readonly Tag[] = Object.entries(dimensions).flatMap(
+  ([dimension, values]) =>
     // The pairing holds because `values` was read from `dimension`'s own key.
     values.map((value) => ({ dimension, value }) as Tag),
 );
@@ -116,12 +113,16 @@ export const withTag = (selection: Selection, tag: Tag): Selection => ({
 });
 
 /** `selection` with nothing selected in `dimension`. */
-export const without = (selection: Selection, dimension: Dimension): Selection => {
+export const without = (
+  selection: Selection,
+  dimension: Dimension,
+): Selection => {
   const { [dimension]: _, ...rest } = selection;
   return rest;
 };
 
-const isDimension = (key: string): key is Dimension => Object.hasOwn(dimensions, key);
+const isDimension = (key: string): key is Dimension =>
+  Object.hasOwn(dimensions, key);
 
 /**
  * Reads a Selection out of URL search params. Keys that aren't Dimensions and
@@ -129,16 +130,41 @@ const isDimension = (key: string): key is Dimension => Object.hasOwn(dimensions,
  * URL can't produce an invalid Selection. A repeated key keeps its first value.
  */
 export const selectionFromSearchParams = (
-    params: Record<string,  string[]>,
+  params: Record<string, string[]>,
 ): Selection =>
-    Object.fromEntries(
-        Object.entries(params).flatMap(([key, raw]) => {
-            const value = Array.isArray(raw) ? raw[0] : raw;
-            if (!isDimension(key) || value === undefined) return [];
-            return (dimensions[key] as readonly string[]).includes(value) ? [[key, value]] : [];
-        }),
-    );
+  Object.fromEntries(
+    Object.entries(params).flatMap(([key, raw]) => {
+      const value = Array.isArray(raw) ? raw[0] : raw;
+      if (!isDimension(key) || value === undefined) return [];
+      return (dimensions[key] as readonly string[]).includes(value)
+        ? [[key, value]]
+        : [];
+    }),
+  );
 
 /** The inverse of `selectionFromSearchParams`, in the schema's Dimension order. */
-export const selectionToSearchParams = (selection: Selection): URLSearchParams =>
-    new URLSearchParams(selectionToTags(selection).map(({dimension, value}) => [dimension, value]));
+export const selectionToSearchParams = (
+  selection: Selection,
+): URLSearchParams =>
+  new URLSearchParams(
+    selectionToTags(selection).map(({ dimension, value }) => [
+      dimension,
+      value,
+    ]),
+  );
+
+/** The search param that carries the sample size alongside the Selection. */
+export const SAMPLE_SIZE_PARAM = "sampleSize";
+
+/**
+ * Reads the sample size out of URL search params. Anything that isn't a
+ * positive whole number is dropped, so a bad URL means "no sample size".
+ */
+export const sampleSizeFromSearchParams = (
+  params: Record<string, string[]>,
+): number | undefined => {
+  const raw = params[SAMPLE_SIZE_PARAM]?.[0];
+  if (raw === undefined || !/^\d+$/.test(raw)) return undefined;
+  const sampleSize = Number(raw);
+  return sampleSize > 0 ? sampleSize : undefined;
+};

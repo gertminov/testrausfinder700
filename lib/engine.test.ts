@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { findTests } from "./engine";
-import {Test} from "@/lib/tests";
+import { Test } from "@/lib/tests";
 
 /**
  * A small hand-built Catalog. Ids are fixture-local; the engine only cares
@@ -29,9 +29,14 @@ const scaleAgnostic = {
   info: "",
   id: "scale-agnostic",
   accepts: { sampleDependency: ["independent"] },
-} as const
+} as const;
 
-const catalog = [pairedT, twoSampleT, anyDependencyRank, scaleAgnostic] as (Test & {id: string})[]
+const catalog = [
+  pairedT,
+  twoSampleT,
+  anyDependencyRank,
+  scaleAgnostic,
+] as (Test & { id: string })[];
 
 const ids = (tests: readonly { id: string }[]) => tests.map((t) => t.id);
 

@@ -9,8 +9,8 @@ import type { Accepts } from "./dimensions";
  */
 export const catalog = withIds({
   "gauss-test": {
-    name: "Gauss-Test",
-    info: "z-Test\n\nMittelwert der GG bekannt\n\nStandardabweichung der GG bekannt: SP-Größe egal\n\nStandardabweichung der GG unbekannt: n > 30 \n\n*z.B. bei Intelligenz\n*Stammt die Stichprobe aus der Grundgesamtheit mit gegebenem mü_0 und SD?",
+    name: "One-sample z-test",
+    info: "Population mean μ₀ given.\n\n• Population standard deviation known: any sample size\n• Population standard deviation unknown: n > 30\n\nExample: intelligence scores.\n\nQuestion: Does the sample come from a population with the given mean μ₀ and standard deviation?",
     accepts: {
       populationVariance: ["known", "unknown"],
       groupCount: ["one"],
@@ -18,11 +18,11 @@ export const catalog = withIds({
       measurementScale: ["interval"],
       researchQuestion: ["difference"],
     },
-    aka: "Z-Test",
+    aka: "Gauss test",
   },
   "one-sample-t-test": {
-    name: "1-Stichproben t-Test",
-    info: "Mittelwert der GG bekannt\n\n nStandardabweichung der GG unbekannt + n < 30\n-->SD-Schätzer Stichprobe berechnen\n\nStammt die Stichprobe aus der Grundgesamtheit mit gegebenem mü_0?",
+    name: "One-sample t-test",
+    info: "Population mean μ₀ given.\n\nPopulation standard deviation unknown and n < 30 → estimate the standard deviation from the sample.\n\nQuestion: Does the sample come from a population with the given mean μ₀?",
     accepts: {
       testFamily: ["parametric"],
       populationVariance: ["unknown"],
@@ -34,8 +34,8 @@ export const catalog = withIds({
     maxN: 29,
   },
   "two-sample-t-test": {
-    name: "2-Stichproben t-Test",
-    info: "Vergleich von 2 unabhängige Stichproben\n\nMesswerte in ihren GGs normalverteilt (bei kleinen Stichproben)\n\nStammen beide Stichproben aus derselben Grundgesamtheit?\n\n\nSonderfall: Test auf Mittelwertunterschied\n*a != 0 (spezifische Hypothese)\n*H1: mü1-mü2 != alpha\n*H0: mü1-mü2 = alpha",
+    name: "Independent two-sample t-test",
+    info: "Compares 2 independent samples.\n\nValues are normally distributed in their populations (matters for small samples).\n\nVariances are equal (homogeneity of variance).\n\nQuestion: Do both samples come from the same population?\n\nSpecial case: testing for a specific mean difference δ ≠ 0 (specific hypothesis)\n• H1: μ₁ − μ₂ ≠ δ\n• H0: μ₁ − μ₂ = δ",
     accepts: {
       testFamily: ["parametric"],
       varianceHomogeneity: ["homogeneous"],
@@ -48,8 +48,8 @@ export const catalog = withIds({
     },
   },
   "welchs-t-test": {
-    name: "Welch-t-Test",
-    info: "Messwerte in ihren GGs normalverteilt (bei kleinen Stichproben)\n\nStammen beide Stichproben aus derselben Grundgesamtheit bzw. unterscheiden sie sich?",
+    name: "Welch's t-test",
+    info: "Compares 2 independent samples with unequal variances.\n\nValues are normally distributed in their populations (matters for small samples).\n\nQuestion: Do both samples come from the same population, i.e. do their means differ?",
     accepts: {
       testFamily: ["parametric"],
       varianceHomogeneity: ["heterogeneous"],
@@ -60,11 +60,11 @@ export const catalog = withIds({
       measurementScale: ["interval"],
       researchQuestion: ["difference"],
     },
-    aka: "Welchtest",
+    aka: "Welch test",
   },
   "paired-t-test": {
-    name: "t-Test für abhängige Stichproben",
-    info: "Vergleich von 2 abhängige Stichproben (Vorher-Nacher-Vergleich)\n\nd_quer ist bei steigenden Werten negativ, bei sinkenden Werten positiv\n\nGibt es eine Veränderung von Messung 1 zu Messung 2?\n\n\nNormalfall: H0: mü_d = 0; Mü_d fällt weg",
+    name: "Paired t-test",
+    info: "Compares 2 dependent samples (e.g. a before–after comparison).\n\nd̄ is negative when values rise and positive when they fall.\n\nQuestion: Is there a change from measurement 1 to measurement 2?\n\nUsual case: H0: μ_d = 0, so μ_d drops out of the test statistic.",
     accepts: {
       testFamily: ["parametric"],
       sampleDependency: ["dependent"],
@@ -76,8 +76,8 @@ export const catalog = withIds({
     },
   },
   "one-way-anova": {
-    name: "ANOVA einfaktoriell",
-    info: "*ANOVA = Analysis of Variance= Varianzanalyse\nVergleich von mehr als 2 unabhängigen Stichproben\n\nVarianzhomogenität\n-->( ANOVA ist robust gegen Verletzung der letzten 2 Annahmen, wenn die Gesamtzahl der VP über 30 ist und die Stichproben gleich groß sind\n\nn-sollte klein werden, wenn es kaum Mittelwertsunterschiede gibt (𝐻0)\n-sollte groß werden, wenn es große\n\n*z.B. Marker für Heilung des Patienten\n*z.B. Medikament: Standard, Neu, Placebo\n\ngleich große Stichproben vs. ungleiche Stichproben\n--> Unterschiede in Berechnung auch von den Kontrasten!",
+    name: "One-way ANOVA",
+    info: "ANOVA = analysis of variance.\n\nCompares more than 2 independent samples.\n\nAssumptions:\n• Values are normally distributed in the populations\n• Homogeneity of variance\nANOVA is robust against violations of both assumptions if the total number of participants is above 30 and the samples are of equal size.\n\nThe F statistic:\n• is small when there are hardly any mean differences (H0)\n• is large when there are large mean differences\n\nExample: a marker of patient recovery under three medications (standard, new, placebo).\n\nEqual vs. unequal sample sizes → the calculations differ, including for contrasts!",
     accepts: {
       factorCount: ["one"],
       groupCount: ["moreThanTwo"],
@@ -87,8 +87,8 @@ export const catalog = withIds({
     },
   },
   "multi-factor-anova": {
-    name: "ANOVA mehrfaktoriell",
-    info: "Vergleich von mehr als 2 unabhängigen Stichproben\n\nNormalverteilung\n\nVarianzhomogenität\n\n2 polytome UVs (Faktoren)\n*UV1 (z.B. Medikament: Standard, Neu, Placebo)\n*UV2 (z.B. Stadium Krankheit: beginnend, fortgeschritten)\n--> mindestens 4 gleich große Stichproben\n\nEinseitig rechts\n*𝐻1: Zwischen den Faktoren besteht eine Interaktion; mindestens ein Mittelwert weicht ab\n*𝐻0: Zwischen den Faktoren besteht keine Interaktion; Mittelwerte innerhalb der Faktoren weichen nicht ab",
+    name: "Factorial ANOVA",
+    info: "Compares more than 2 independent samples.\n\nAssumptions:\n• Normal distribution\n• Homogeneity of variance\n\n2 polytomous independent variables (factors), e.g.\n• Independent variable 1: medication (standard, new, placebo)\n• Independent variable 2: disease stage (early, advanced)\n→ at least 4 samples of equal size\n\nRight-tailed:\n• H1: the factors interact; at least one mean deviates\n• H0: the factors do not interact; the means within the factors do not deviate",
     accepts: {
       factorCount: ["two"],
       groupCount: ["moreThanTwo"],
@@ -98,8 +98,8 @@ export const catalog = withIds({
     },
   },
   "chi-square-test-variance": {
-    name: "Chi^2 Test (X^2 Test)",
-    info: "Messwerte in der GG normalverteilt\nStichprobe mit Anzahl n und Varianzschätzer\nVarianz der GG bekannt\n\nStammt die Stichprobe aus der Grundgesamtheit mit der gegeben Streuung?\n\n\nEinseitig links: am häufigsten soll Streuung geringer werden",
+    name: "Chi-square test for a variance",
+    info: "Values are normally distributed in the population.\n\nGiven: a sample of size n with its variance estimate, and the known population variance.\n\nQuestion: Does the sample come from a population with the given variance?\n\nUsually left-tailed: most often the question is whether the variance has decreased.",
     accepts: {
       groupCount: ["one"],
       differenceRegarding: ["variance"],
@@ -108,8 +108,8 @@ export const catalog = withIds({
     },
   },
   "f-test": {
-    name: "F-Test",
-    info: "2 unabhängige Stichproben\n\nMesswerte in den GGs normalverteilt\n\nVarianzhomogenität\n\nVarianzschätzer der beiden Stichproben und beide Anzahlen 𝒏𝟏 und 𝒏𝟐 bekannt\n\nÜberprüfung der Homogenität von Varianzen\n\nIst die Streuung in SP1 geringer/höher/anders als in SP2?",
+    name: "F-test for equality of variances",
+    info: "2 independent samples.\n\nValues are normally distributed in the populations.\n\nGiven: the variance estimates of both samples and both sample sizes n₁ and n₂.\n\nTests whether the variances are homogeneous.\n\nQuestion: Is the variance in sample 1 smaller / larger / different than in sample 2?",
     accepts: {
       testFamily: ["parametric"],
       groupCount: ["two"],
@@ -119,8 +119,8 @@ export const catalog = withIds({
     },
   },
   "chi-square-goodness-of-fit-normal-polytomous": {
-    name: "Chi^2 Anpassungstest (polytom) auf Normalverteilung",
-    info: "Besteht Normalverteilung?",
+    name: "Chi-square goodness-of-fit test for normality (polytomous)",
+    info: "Question: Are the data normally distributed?\n\nThe calculation differs from the ordinary polytomous chi-square goodness-of-fit test.",
     accepts: {
       differenceRegarding: ["distribution"],
       measurementScale: ["interval"],
@@ -128,8 +128,8 @@ export const catalog = withIds({
     },
   },
   "wilcoxon-signed-rank-normal-approx": {
-    name: "Wilcoxon-Test (NV-Approximation)",
-    info: "2 abhängige Stichproben\n\nKeine Rangbindungen\n\n\nd_quer ist bei steigenden Werten negativ, bei sinkenden Werten positiv\n\nDifferenzen bilden, 0-Werte ignorieren, ggf. 𝒏 anpassen",
+    name: "Wilcoxon signed-rank test (normal approximation)",
+    info: "2 dependent samples.\n\nNo tied ranks.\n\nd̄ is negative when values rise and positive when they fall.\n\nCompute the differences; ignore zero differences and reduce n accordingly.",
     accepts: {
       testFamily: ["nonparametric"],
       dataSeriesCount: ["two"],
@@ -141,8 +141,8 @@ export const catalog = withIds({
     minN: 26,
   },
   "wilcoxon-signed-rank-tied-rank-approx": {
-    name: "Wilcoxon-Test (Rangbindungs-Approximation)",
-    info: "2 abhängige Stichproben\n\n Rangbindungen\n\n\nT=Summe der Ränge jener Differenzen, deren Vorzeichen das seltenere ist (+/−)\n\n*n = Anzahl der Differenzen, die nicht 0 sind\n*k = Anzahl der Rangbindungen\n*ti = Anzahl Personen auf Rang i",
+    name: "Wilcoxon signed-rank test (tie correction)",
+    info: "2 dependent samples.\n\nTied ranks present.\n\nT = sum of the ranks of the differences whose sign is the less frequent one (+/−).\n\n• n = number of non-zero differences\n• k = number of tied rank groups\n• tᵢ = number of people sharing rank i",
     accepts: {
       testFamily: ["nonparametric"],
       rankTies: ["present"],
@@ -155,8 +155,8 @@ export const catalog = withIds({
     maxN: 25,
   },
   "wilcoxon-signed-rank-exact": {
-    name: "Wilcoxon-Test",
-    info: "2 abhängige Stichproben\n\nKeine Rangbindungen\n\n\nd_quer ist bei steigenden Werten negativ, bei sinkenden Werten positiv\n\nDifferenzen bilden, 0-Werte ignorieren, ggf. 𝒏 anpassen\n\n Kritischen Wert für T oder T‘ aus Tabelle ablesen",
+    name: "Wilcoxon signed-rank test (exact)",
+    info: "2 dependent samples.\n\nNo tied ranks.\n\nd̄ is negative when values rise and positive when they fall.\n\nCompute the differences; ignore zero differences and reduce n accordingly.\n\nLook up the critical value for T or T′ in the table.",
     accepts: {
       rankTies: ["absent"],
       dataSeriesCount: ["two"],
@@ -168,8 +168,8 @@ export const catalog = withIds({
     maxN: 25,
   },
   "sign-test": {
-    name: "Vorzeichentest",
-    info: "2 abhängige Stichproben\n\nKeine Rangbindungen\n\n\nd_quer ist bei steigenden Werten negativ, bei sinkenden Werten positiv\n\n0-Werte ignorieren, ggf. 𝒏 anpassen\n\nDie Vorzeichen sind binominalverteilt, Basiswahrscheinlichkeit 0,5\n\nTestwahrscheinlichkeit 𝒑 berechnen",
+    name: "Sign test",
+    info: "2 dependent samples.\n\nd̄ is negative when values rise and positive when they fall.\n\nIgnore zero differences and reduce n accordingly.\n\nThe signs are binomially distributed with base probability 0.5.\n\nCompute the probability p of the observed result.",
     accepts: {
       dataSeriesCount: ["two"],
       groupCount: ["one"],
@@ -179,8 +179,8 @@ export const catalog = withIds({
     },
   },
   "sign-test-normal-approx": {
-    name: "Vorzeichentest (NV-Approximation)",
-    info: "2 abhängige Stichproben\n\nKeine Rangbindungen",
+    name: "Sign test (normal approximation)",
+    info: "2 dependent samples.\n\nIgnore zero differences and reduce n accordingly.\n\nFor large samples the binomial distribution of the signs is approximated by the normal distribution.",
     accepts: {
       dataSeriesCount: ["two"],
       groupCount: ["one"],
@@ -191,8 +191,8 @@ export const catalog = withIds({
     minN: 36,
   },
   "mann-whitney-u-normal-approx": {
-    name: "Mann-Whitney-U-Test (NV-Approximation)",
-    info: "GGs der Stichproben sollen:\n*symmetrisch sein\n*dieselbe Form haben (Test ist aber gegen Verletzung dieser Voraussetzung robust)",
+    name: "Mann–Whitney U test (normal approximation)",
+    info: "The populations of the samples should:\n• be symmetric\n• have the same shape (the test is robust against violations of this assumption)",
     accepts: {
       testFamily: ["nonparametric"],
       dataSeriesCount: ["two"],
@@ -204,8 +204,8 @@ export const catalog = withIds({
     minN: 21,
   },
   "mann-whitney-u-tied-rank-approx": {
-    name: "Mann-Whitney-U-Test (Rangbindungs- Approximation)",
-    info: "Rangbindungen\n\nGGs der Stichproben sollen:\n*symmetrisch sein\n*dieselbe Form haben (Test ist aber gegen Verletzung dieser Voraussetzung robust)\n\n\n*𝑛=𝑛1+𝑛2\n*𝑘=Anzahl Rangbindungen\n*𝑡𝑖=Anzahl Personen auf dem Rang 𝑖\n*Prüfgröße berechnen\n\n\nSP-Größe <= 20",
+    name: "Mann–Whitney U test (tie correction)",
+    info: "Tied ranks present.\n\nThe populations of the samples should:\n• be symmetric\n• have the same shape (the test is robust against violations of this assumption)\n\n• n = n₁ + n₂\n• k = number of tied rank groups\n• tᵢ = number of people sharing rank i\nThen compute the test statistic.\n\nSample size ≤ 20.",
     accepts: {
       testFamily: ["nonparametric"],
       rankTies: ["present"],
@@ -218,8 +218,8 @@ export const catalog = withIds({
     maxN: 20,
   },
   "mann-whitney-u-exact": {
-    name: "Mann-Whitney-U-Test",
-    info: "GGs der Stichproben sollen:\n*symmetrisch sein\n*dieselbe Form haben (Test ist aber gegen Verletzung dieser Voraussetzung robust)\n\n\nU‘=n1*n2-U\n\nU heißt: Wie oft werden Personen in SP1 von Personen in SP2 im Rang übertroffen?\n\nKritischen Wert in Bortz-Tabelle nachschlagen:  U oder U‘, je nachdem was kleiner ist!",
+    name: "Mann–Whitney U test (exact)",
+    info: "The populations of the samples should:\n• be symmetric\n• have the same shape (the test is robust against violations of this assumption)\n\nU′ = n₁·n₂ − U\n\nU counts how often people in sample 1 are outranked by people in sample 2.\n\nLook up the critical value in the Bortz table, using U or U′, whichever is smaller!",
     accepts: {
       testFamily: ["nonparametric"],
       rankTies: ["absent"],
@@ -232,8 +232,8 @@ export const catalog = withIds({
     maxN: 20,
   },
   "binomial-test-normal-approx": {
-    name: "Binomialtest mit NV-Approximation",
-    info: "*beobachtete Treffer =𝑏1\n*Mittelwert = Anzahl ∗erwartete Wsk = 𝑛∗𝜋\n*SD =𝑛∗𝜋∗(1−𝜋)\n\nevtl. Kontinuitätskorrektur",
+    name: "Binomial test (normal approximation)",
+    info: "• Observed hits = b₁\n• Mean = number × expected probability = n·π\n• Standard deviation = √(n·π·(1−π))\n\nApply a continuity correction if needed.",
     accepts: {
       normalApproximationValid: ["yes"],
       categoryCount: ["dichotomous"],
@@ -244,8 +244,8 @@ export const catalog = withIds({
     },
   },
   "binomial-test-exact": {
-    name: "Binomialtest exakt",
-    info: "erwartete Hkt: e <= 10\n--> e = p*n = Wahrscheinlichkeit∗Anzahl\n\nBeobachtete Treffer: laut 𝐻1 kleinere Anzahl\n\nErwartete Wahrscheinlichkeit entsprechend zugehörig wählen\n\n2 abhängige Datenreihen/Stichproben --> vorher/nachher-Vergleich",
+    name: "Exact binomial test",
+    info: "Expected frequency e ≤ 10\n→ e = π·n = probability × number\n\nObserved hits: the smaller count according to H1.\n\nChoose the expected probability to match.\n\nAlso for 2 dependent data series/samples → before–after comparison.",
     accepts: {
       expectedCellFrequency: ["atMost10"],
       normalApproximationValid: ["no"],
@@ -258,8 +258,8 @@ export const catalog = withIds({
     maxN: 20,
   },
   "chi-square-goodness-of-fit-dichotomous": {
-    name: "X²-Anpassungstest dichotom",
-    info: "erwartete Hkt: e > 10\n--> e = p*n = Wahrscheinlichkeit∗Anzahl\n\nBeobachtete Häufigkeiten: 𝑏1 und 𝑏2\n\nWahrscheinlichkeit bzw. relative Häufigkeit in der GG 𝜋\n\nErwartete Häufigkeiten 𝑒1 und 𝑒2 > 10, ansonsten Binomialtest rechnen",
+    name: "Chi-square goodness-of-fit test (dichotomous)",
+    info: "Expected frequency e > 10\n→ e = π·n = probability × number\n\nObserved frequencies: b₁ and b₂\n\nProbability or relative frequency in the population: π\n\nBoth expected frequencies e₁ and e₂ must be > 10; otherwise use the binomial test.",
     accepts: {
       expectedCellFrequency: ["above10"],
       categoryCount: ["dichotomous"],
@@ -271,8 +271,8 @@ export const catalog = withIds({
     minN: 10,
   },
   "chi-square-goodness-of-fit-polytomous": {
-    name: "Χ² -Anpassungstest (polytom)",
-    info: "Alle erwarteten Häufigkeiten 𝑒>5\n\nBeobachtete Häufigkeiten 𝑏1,𝑏2,𝑏3,…𝑏\n\n𝑘mit 𝑘=Anzahl Kategorien (z.B. Blutgruppen)\n\nAnpassung z.B. an Gleichverteilung, Normalverteilung oder bekannter Verteilung\n\nHypothesen: Zweiseitig\n*𝐻0:beobachtete Häufigkeiten passen zu den erwarteten Häufigkeiten\n*𝐻1:beobachtete Häufigkeiten weichen von den erwarteten Häufigkeiten ab\n\n\nPrüfgröße bei Gleichverteilung und bekannter Verteilung:\n*Bei bekannter Verteilung gemäß Angabe in der Aufgabe\n*Bei Gleichverteilung 𝑒𝑘=𝑛𝑘 mit 𝑘=Anzahl Kategorien\n\nEntspricht die Verteilung einer GG-Verteilung, die ich unter 𝐻0 erwartet?\n\n!Abweichende Berechnung bei Prüfung auf Normalverteilung!",
+    name: "Chi-square goodness-of-fit test (polytomous)",
+    info: "All expected frequencies e > 5.\n\nObserved frequencies b₁, b₂, b₃, …, b_k with k = number of categories (e.g. blood types).\n\nFit e.g. to a uniform distribution, a normal distribution or another known distribution.\n\nHypotheses (two-sided):\n• H0: the observed frequencies match the expected frequencies\n• H1: the observed frequencies deviate from the expected frequencies\n\nExpected frequencies for the test statistic:\n• Known distribution: as given in the task\n• Uniform distribution: e = n / k, with k = number of categories\n\nQuestion: Does the distribution match the population distribution I expect under H0?\n\nNote: the calculation differs when testing for normality!",
     accepts: {
       categoryCount: ["polytomous"],
       sampleDependency: ["independent"],
@@ -282,8 +282,8 @@ export const catalog = withIds({
     },
   },
   "mcnemars-test": {
-    name: "Mc-Nemar-Test",
-    info: "2 abhängige Datenreihen/Stichproben --> vorher/nachher-Vergleich\n\nBeobachtete Häufigkeiten sollten alle > 5 sein\n\n 𝒃+𝒄 ≤ 𝟐𝟎: exakter Binominaltest:\n*=BINOM.VERT(x; b+c; 0,5; 1)\n*x=kleinere Zahl von b und c",
+    name: "McNemar test",
+    info: "2 dependent data series/samples → before–after comparison.\n\nObserved frequencies should all be > 5.\n\nIf b + c ≤ 20, use the exact binomial test:\n• =BINOM.DIST(x, b+c, 0.5, TRUE)\n• x = the smaller of b and c",
     accepts: {
       dataSeriesCount: ["two"],
       sampleDependency: ["dependent"],
@@ -294,8 +294,8 @@ export const catalog = withIds({
     minN: 30,
   },
   "mcnemars-test-continuity-correction": {
-    name: "Mc-Nemar-Test (Kontinuitätskorrektur)",
-    info: "2 abhängige Datenreihen/Stichproben --> vorher/nachher-Vergleich\n\nBeobachtete Häufigkeiten sollten alle > 5 sein\n\nHat sich zwischen den Messzeitpunkten die Verteilungen in den Kategorien signifikant verändert?",
+    name: "McNemar test (continuity correction)",
+    info: "2 dependent data series/samples → before–after comparison.\n\nObserved frequencies should all be > 5.\n\nQuestion: Did the distribution across the categories change significantly between the two measurement times?",
     accepts: {
       dataSeriesCount: ["two"],
       sampleDependency: ["dependent"],
@@ -307,10 +307,11 @@ export const catalog = withIds({
     maxN: 30,
   },
   "cochrans-q-test": {
-    name: "Cochran's Q Test",
-    info: "mehr als 2 abhängige Stichproben\n\nHypothesen: Zweiseitig\n*𝐻1: Anteilsverteilung ändert sich\n*𝐻0: Anteilsverteilung bleibt gleich",
+    name: "Cochran's Q test",
+    info: "More than 2 dependent samples (e.g. repeated measurements) with a dichotomous outcome.\n\nHypotheses (two-sided):\n• H1: the proportions change\n• H0: the proportions stay the same",
     accepts: {
-      dataSeriesCount: ["two"],
+      dataSeriesCount: ["moreThanTwo"],
+      categoryCount: ["dichotomous"],
       sampleDependency: ["dependent"],
       groupCount: ["one"],
       measurementScale: ["nominal"],
@@ -318,8 +319,8 @@ export const catalog = withIds({
     },
   },
   "2x2-chi-square-goodness-of-fit": {
-    name: "4-Felder-X²-Anpassungstest",
-    info: "2 dichotome Merkmale\n\nkeine Messwiederholung --> Unabhängigkeit der Daten\n\nalle erwarteten Häufigkeiten 𝑒>5\n\nHypothesen\n*𝐻1: Verteilungen nicht gleich bzw. Zeilen− und Spaltenvariable sind abhängig\n*𝐻0: Verteilungen gleich bzw. Zeilen− und Spaltenvariable sind unabhängig\n\nUnabhängigkeitstests= chi-square test for independence\n\n*Sind die Verteilungen auf dem einen Merkmal identisch, wenn man die Stichprobe nach dem zweiten Merkmal unterteilt?\n*Sind die beiden Merkmale unabhängig verteilt?\n*z.B.: Hängt das Bestehen der Statistikklausur vom Geschlecht ab?",
+    name: "2×2 chi-square goodness-of-fit test",
+    info: "2 dichotomous characteristics.\n\nNo repeated measures → the data are independent.\n\nAll expected frequencies e > 5.\n\nHypotheses:\n• H1: the distribution in the rows/columns differs from the population\n• H0: the distribution in the rows/columns is the same as in the population\n\nQuestion: Does the distribution match the population distribution I expect under H0?",
     accepts: {
       dataSeriesCount: ["two"],
       marginalProbability: ["known"],
@@ -329,8 +330,8 @@ export const catalog = withIds({
     },
   },
   "2x2-chi-square-independence": {
-    name: "4-Felder-X²-Unabhängigkeitstest",
-    info: "2 dichotome Merkmale\n\nkeine Messwiederholung --> Unabhängigkeit der Daten\n\nalle erwarteten Häufigkeiten 𝑒>5\n\nHypothesen\n*𝐻1: Verteilung in Zeilen/ Spalten unterscheidet sich von GG\n*𝐻0: gleiche Verteilung in Zeilen/Spalten wie in GG\n\nAnpassungstests = chi-square test for goodness of fit\n\nEntspricht die Verteilung einer GG-Verteilung, die ich unter 𝐻0 erwarte?",
+    name: "2×2 chi-square test of independence",
+    info: "2 dichotomous characteristics.\n\nNo repeated measures → the data are independent.\n\nAll expected frequencies e > 5.\n\nHypotheses:\n• H1: the distributions are not equal, i.e. the row and column variables are dependent\n• H0: the distributions are equal, i.e. the row and column variables are independent\n\nQuestions:\n• Is the distribution of one characteristic the same when the sample is split by the second characteristic?\n• Are the two characteristics independently distributed?\n• Example: Does passing the statistics exam depend on gender?",
     accepts: {
       dataSeriesCount: ["two"],
       marginalProbability: ["unknown"],
@@ -340,8 +341,8 @@ export const catalog = withIds({
     },
   },
   "rxc-chi-square-test": {
-    name: "rxc-X²-Test",
-    info: "2 polytome Merkmale, also mit mehr als 2 Ausprägungen \n\nkeine Messwiederholung --> Unabhängigkeit der Daten\n\nalle erwarteten Häufigkeiten 𝑒>5\n\nHypothesen: Zweiseitig\n*𝐻1: Verteilungen nicht gleich bzw. Zeilen− und Spaltenvariable sind abhängig\n*𝐻0: Verteilungen gleich bzw. Zeilen− und Spaltenvariable sind unabhängig\n\nUnabhängigkeitstests= chi-square test for independence\n\nSind die Verteilungen auf dem einen Merkmal identisch, wenn man die Stichprobe nach dem zweiten Merkmal unterteilt?",
+    name: "r×c chi-square test of independence",
+    info: "2 polytomous characteristics, i.e. with more than 2 categories each.\n\nNo repeated measures → the data are independent.\n\nAll expected frequencies e > 5.\n\nHypotheses (two-sided):\n• H1: the distributions are not equal, i.e. the row and column variables are dependent\n• H0: the distributions are equal, i.e. the row and column variables are independent\n\nQuestion: Is the distribution of one characteristic the same when the sample is split by the second characteristic?",
     accepts: {
       groupCount: ["moreThanTwo"],
       measurementScale: ["nominal"],
@@ -349,8 +350,8 @@ export const catalog = withIds({
     },
   },
   "correlation-test-deviation-from-zero": {
-    name: "Korrelations-Test Abweichung von 0",
-    info: "AV und UV intervallskaliert\n\n2 mindestens intervallskalierte Datenreihen \n\np = 0\n*𝝆 ist die „wahre Korrelation in der Population\n\nKorrelation 𝒓und Anzahl 𝒏 gegeben oder berechenbar\n*𝐻1: „Die SP-Korrelation weicht signifikant von 0 ab“\n*Je größer die Stichprobe, desto kleinere Korrelationen werden signifikant\n\nSignifikanztest für den Steigungsparameter 𝑏 einer Regressionsgeraden ist äquivalent",
+    name: "Pearson correlation test (ρ = 0)",
+    info: "Dependent and independent variable are interval-scaled.\n\n2 data series, at least interval-scaled.\n\nH0: ρ = 0\n• ρ is the true correlation in the population\n\nCorrelation r and sample size n are given or can be computed.\n• H1: the sample correlation deviates significantly from 0\n• The larger the sample, the smaller the correlations that become significant\n\nEquivalent to the significance test for the slope b of a regression line.",
     accepts: {
       correlationHypothesis: ["zero"],
       groupCount: ["one"],
@@ -359,8 +360,8 @@ export const catalog = withIds({
     },
   },
   "correlation-test-deviation-from-nonzero-value": {
-    name: "Korrelations-Test Abweichung von Wert ≠ 0",
-    info: "AV und UV intervallskaliert\n\n2 mindestens intervallskalierte Datenreihen \n\n Feste Korrelation einer Population 𝒑_𝟎 != 𝟎 gegeben\n*𝝆 ist die „wahre Korrelation in der Population\n\nKorrelation 𝒓und Anzahl 𝒏 gegeben oder berechenbar\n\n𝐻1: „Die SP-Korrelation weicht signifikant von einer gegebenen GG-Korrelation ab, die nicht 0 ist“",
+    name: "Pearson correlation test (ρ = ρ₀ ≠ 0)",
+    info: "Dependent and independent variable are interval-scaled.\n\n2 data series, at least interval-scaled.\n\nA fixed population correlation ρ₀ ≠ 0 is given.\n• ρ is the true correlation in the population\n\nCorrelation r and sample size n are given or can be computed.\n\nH1: the sample correlation deviates significantly from a given population correlation that is not 0.",
     accepts: {
       correlationHypothesis: ["nonzero"],
       groupCount: ["one"],
@@ -369,8 +370,8 @@ export const catalog = withIds({
     },
   },
   "two-sample-correlation-test": {
-    name: "2-Stichproben-Korrelations-Test",
-    info: "AV und UV intervallskaliert\n\n2 unabhängige Stichproben mit je 2 mindestens intervallskalierte Datenreihen\n\nKorrelationen 𝒓𝟏und 𝒓𝟐; Anzahlen 𝒏𝟏 und 𝒏𝟐 gegeben oder berechenbar\n\n𝐻1: „Korrelation 1 weicht signifikant von Korrelation 2 ab“",
+    name: "Comparison of two independent correlations",
+    info: "Dependent and independent variable are interval-scaled.\n\n2 independent samples, each with 2 data series that are at least interval-scaled.\n\nCorrelations r₁ and r₂ and sample sizes n₁ and n₂ are given or can be computed.\n\nH1: correlation 1 deviates significantly from correlation 2.",
     accepts: {
       groupCount: ["two"],
       measurementScale: ["interval"],
@@ -378,16 +379,16 @@ export const catalog = withIds({
     },
   },
   "spearman-correlation-test": {
-    name: "Spearman-Korrelations-Test",
-    info: "AV und UV ordinalskaliert \n\n2 mindestens ordinalskalierte Datenreihen, also Ränge\n\nKorrelation 𝒓_𝒔𝒑 und Anzahl 𝒏 gegeben oder berechenbar\n\n𝐻1: „Korrelation weicht signifikant von 0 ab“\n\n*< 20% Rangbindungen: =KORREL(Matrix1; Matrix2)\n*Mit mehr als 20% Rangbindungen: Formel Bortz S. 179 verwenden",
+    name: "Spearman rank correlation test",
+    info: "Dependent and independent variable are ordinal.\n\n2 data series, at least ordinal, i.e. ranks.\n\nCorrelation r_s and sample size n are given or can be computed.\n\nH1: the correlation deviates significantly from 0.\n\n• Less than 20% tied ranks: =CORREL(array1, array2) on the ranks\n• More than 20% tied ranks: use the formula in Bortz p. 179",
     accepts: {
       measurementScale: ["ordinal"],
       researchQuestion: ["relationship"],
     },
   },
   "phi-coefficient": {
-    name: "Punkt-4-Felder-Korrelation (Phi-Koeffizient)",
-    info: "AV und UV nominalskaliert \n\nKorrelation von 2 dichotomen Merkmalen\n\nZunächst: Berechnung eines 4-Felder-𝑿𝟐-Unabhängigkeitstests\n--> Wird dieser signifikant, ist es der 𝛷-Koeffizient auch",
+    name: "Phi coefficient",
+    info: "Dependent and independent variable are nominal.\n\nCorrelation of 2 dichotomous characteristics.\n\nFirst compute a 2×2 chi-square test of independence → if it is significant, so is the phi coefficient (Φ).",
     accepts: {
       categoryCount: ["dichotomous"],
       measurementScale: ["nominal"],
@@ -395,8 +396,8 @@ export const catalog = withIds({
     },
   },
   "contingency-coefficient-c": {
-    name: "Kontingenz-Koeffizient C , über rxc-X²-Test",
-    info: "AV und UV polychotom\n\nKorrelation von 2 polytomen Merkmalen\n\nZunächst: Berechnung eines rxc-Tests\n--> Wird dieser signifikant, ist es der Kontingenz-Koeffizient auch\n\nNicht von der Produkt-Moment-Korrelation abgeleitet\n*deshalb nicht gut mit PM-Korrelationskoeffizienten vergleichbar\n*𝐂² ist nicht der „Anteil aufgeklärter Varianz“\n*Deshalb besser: Cramer‘s Index",
+    name: "Contingency coefficient C (via r×c chi-square test)",
+    info: "Dependent and independent variable are polytomous.\n\nCorrelation of 2 polytomous characteristics.\n\nFirst compute an r×c chi-square test → if it is significant, so is the contingency coefficient.\n\nNot derived from the product-moment correlation:\n• so it is hard to compare with product-moment correlation coefficients\n• C² is not the “proportion of explained variance”\n• Better: Cramér's V",
     accepts: {
       categoryCount: ["polytomous"],
       measurementScale: ["nominal"],
@@ -404,8 +405,8 @@ export const catalog = withIds({
     },
   },
   "cramers-v": {
-    name: "Cramer's Index CI, über rxc-X²-Test",
-    info: "AV und UV polychotom\n\nKorrelation von 2 polytomen Merkmalen\n\nZunächst: Berechnung eines rxc-Tests\n--> Wird dieser signifikant, ist es der Cramer’s Index auch\n\n𝑹: das Minimum der Anzahl von Reihen (rows) und Spalten (columns)\n--> schauen was kleiner ist\n\n*Besser mit Produkt-Moment-Korrelationen vergleichbar als der Kontingenz-Koeffizient 𝐶\n*Bei 𝑟=2 oder 𝑐=2 identisch zum 𝛷-Koeffizienten",
+    name: "Cramér's V (via r×c chi-square test)",
+    info: "Dependent and independent variable are polytomous.\n\nCorrelation of 2 polytomous characteristics.\n\nFirst compute an r×c chi-square test → if it is significant, so is Cramér's V.\n\nR = the smaller of the number of rows and the number of columns.\n\n• Easier to compare with product-moment correlations than the contingency coefficient C\n• Identical to the phi coefficient when r = 2 or c = 2",
     accepts: {
       categoryCount: ["polytomous"],
       measurementScale: ["nominal"],
@@ -413,8 +414,8 @@ export const catalog = withIds({
     },
   },
   "point-biserial-correlation": {
-    name: "Punkt-biserialer Korrelations-Test",
-    info: "2 unabhängige Stichproben\n\n 2 intervallskalierten Datenreihen\n\nUnterteilt nach einem dichotomen Merkmal (z.B. m/w)\n\nKorrelation 𝒓_𝒑𝒃 und Anzahl 𝒏 gegeben oder berechenbar\n\nÄquivalent zum t-Test für unabhängige Stichproben\n\ndichotome Variable mit 0/1 kodieren und =KORREL",
+    name: "Point-biserial correlation test",
+    info: "One interval-scaled variable, split by a dichotomous characteristic (e.g. male/female) → 2 independent samples.\n\nCorrelation r_pb and sample size n are given or can be computed.\n\nEquivalent to the t-test for independent samples.\n\nCode the dichotomous variable as 0/1 and use =CORREL.",
     accepts: {
       measurementScale: ["interval"],
       independentVariableScale: ["nominal"],
@@ -422,8 +423,8 @@ export const catalog = withIds({
     },
   },
   "equivalence-test-independent-samples": {
-    name: "Äquivalenztest für unabh. Stichproben",
-    info: "Vom Experten festgelegter Äquivalenzbereich ±𝜟\n\n man möchte, dass die 𝐻0 nicht verworfen wird (aus unserem bisherigen Standpunkt)\n\n*z.B. Generikum wirkt genau wie das Markenmedikament\n*z.B. Therapien sind gleich gut\n\nIn der Klausur kann beides drankommen, nicht immer ist ein Äquivalenztest möglich:\n*nur wenn ein Äquivalenzbereich definiert ist\n*und wenn die Daten Intervallskalenniveau haben\n*Jeder (Nicht-Äquivalenz-) Test kann ein Krückentest sein\n\n*𝐻1 --> möglichst kleine Mittelwertsdifferenz\n*𝐻0 --> große Mittelwertsdifferenz",
+    name: "Equivalence test for independent samples",
+    info: "Equivalence range ±Δ set by an expert.\n\nFrom the standpoint of an ordinary test, you want H0 not to be rejected. The equivalence test reverses the hypotheses:\n• H1: the mean difference is as small as possible (within ±Δ)\n• H0: the mean difference is large (outside ±Δ)\n\nExamples:\n• A generic drug works exactly like the brand-name drug\n• Two therapies are equally good\n\nEither can come up in the exam. An equivalence test is only possible:\n• if an equivalence range is defined\n• and the data are interval-scaled\nOtherwise, any ordinary (non-equivalence) test can serve as a crutch test.",
     accepts: {
       sampleDependency: ["independent"],
       equivalenceEstablished: ["yes"],
@@ -432,8 +433,8 @@ export const catalog = withIds({
     },
   },
   "equivalence-test-dependent-samples": {
-    name: "Äquivalenztest für abhängige Stichproben",
-    info: "abhängige Stichproben --> Messwiederholung, VPs werden zu 2 Zeitpunkten untersucht\n\nVom Experten festgelegter Äquivalenzbereich ±𝜟\n\nman möchte, dass die 𝐻0 nicht verworfen wird (aus unserem bisherigen Standpunkt)\n\n*z.B. Generikum wirkt genau wie das Markenmedikament\n*z.B. Therapien sind gleich gut\n\nIn der Klausur kann beides drankommen, nicht immer ist ein Äquivalenztest möglich:\n*nur wenn ein Äquivalenzbereich definiert ist\n*und wenn die Daten Intervallskalenniveau haben\n*Jeder (Nicht-Äquivalenz-) Test kann ein Krückentest sein",
+    name: "Equivalence test for dependent samples",
+    info: "Dependent samples → repeated measures; participants are tested at 2 points in time.\n\nEquivalence range ±Δ set by an expert.\n\nFrom the standpoint of an ordinary test, you want H0 not to be rejected. The equivalence test reverses the hypotheses:\n• H1: the mean difference is as small as possible (within ±Δ)\n• H0: the mean difference is large (outside ±Δ)\n\nExamples:\n• A generic drug works exactly like the brand-name drug\n• Two therapies are equally good\n\nEither can come up in the exam. An equivalence test is only possible:\n• if an equivalence range is defined\n• and the data are interval-scaled\nOtherwise, any ordinary (non-equivalence) test can serve as a crutch test.",
     accepts: {
       sampleDependency: ["dependent"],
       equivalenceEstablished: ["yes"],
@@ -444,8 +445,8 @@ export const catalog = withIds({
   // No measurementScale entry: the source listed every scale, which is the
   // same as not caring.
   "crutch-test-alpha-02": {
-    name: "Krückentest mit α = 0,2",
-    info: "einfach 𝜶 beim Nullhypothesentest auf 20% vergrößern mit dem Ziel die Nullhypothese beizubehalten\n\nman möchte, dass die 𝐻0 nicht verworfen wird (aus unserem bisherigen Standpunkt)\n\n*z.B. Generikum wirkt genau wie das Markenmedikament\n*z.B. Therapien sind gleich gut\n\n\noder:\n\nordinal- oder nominalskaliert",
+    name: "Crutch test (α = 0.2)",
+    info: "Simply raise α of the ordinary null hypothesis test to 20%, with the aim of retaining the null hypothesis.\n\nFor when you want H0 not to be rejected, e.g.\n• a generic drug works exactly like the brand-name drug\n• two therapies are equally good\n\nAlso when the data are ordinal or nominal.",
     accepts: {
       equivalenceEstablished: ["no"],
       researchQuestion: ["equivalence"],

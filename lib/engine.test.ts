@@ -9,6 +9,7 @@ import { Test } from "@/lib/tests";
 const pairedT = {
   id: "paired-t",
   accepts: { sampleDependency: ["dependent"], measurementScale: ["interval"] },
+  order: 1,
 } as const;
 const twoSampleT = {
   id: "two-sample-t",
@@ -16,6 +17,7 @@ const twoSampleT = {
     sampleDependency: ["independent"],
     measurementScale: ["interval"],
   },
+  order: 2,
 } as const;
 const anyDependencyRank = {
   id: "any-dependency-rank",
@@ -23,12 +25,14 @@ const anyDependencyRank = {
     sampleDependency: ["dependent", "independent"],
     measurementScale: ["ordinal"],
   },
+  order: 3,
 } as const;
 const scaleAgnostic = {
   name: "Scale-Agnostic",
   info: "",
   id: "scale-agnostic",
   accepts: { sampleDependency: ["independent"] },
+  order: 4
 } as const;
 
 const catalog = [
@@ -152,10 +156,8 @@ describe("findTests", () => {
   describe("possible criteria", () => {
     it("offers each discriminating Dimension with the values tagged on Eligible tests, in schema order", () => {
       expect(findTests(catalog, {}).possibleCriteria).toEqual([
-        { dimension: "measurementScale", value: "interval" },
-        { id: "measurementScale", value: "ordinal" },
-        { id: "sampleDependency", value: "dependent" },
-        { id: "sampleDependency", value: "independent" },
+        { dimension: "measurementScale", values: ["interval", "ordinal"] },
+        { id: "sampleDependency", value: ["dependent" , "independent"]},
       ]);
     });
 
@@ -164,7 +166,7 @@ describe("findTests", () => {
       // selection itself keeps sampleDependency out.
       const result = findTests(catalog, { sampleDependency: "dependent" });
       expect(result.possibleCriteria).toEqual([
-        { dimension: "measurementScale", value: "interval" },
+        { dimension: "measurementScale", values: ["interval"] },
         { id: "measurementScale", value: "ordinal" },
       ]);
     });

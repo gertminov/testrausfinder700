@@ -111,7 +111,7 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   dataSeriesCount: {
     name: "Data series",
     hint: "How many measured variables go into the test",
-    values: { two: "Two" },
+    values: { two: "Two", moreThanTwo: "More than two" },
   },
   expectedCellFrequency: {
     name: "Expected cell frequencies",

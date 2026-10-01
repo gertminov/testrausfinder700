@@ -1,12 +1,13 @@
 import {
   allTags,
   type Dimension,
+  dimensionNames, dimensions,
   type Selection,
   selectionToTags,
   type Tag,
   type TagOf,
 } from "./dimensions";
-import { Test } from "@/lib/tests";
+import {catalog, Test} from "@/lib/tests";
 
 export interface MatchResult {
   selectedCriteria: Selection;
@@ -14,7 +15,7 @@ export interface MatchResult {
   sampleSize?: number;
   possibleTests: Test[];
   /** The Tags still worth offering*/
-  possibleCriteria: Tag[];
+  possibleCriteria: {dimension: Dimension, values: string[]}[];
 }
 
 /**
@@ -54,18 +55,26 @@ const eligibleTests = (
 const narrowingCriteria = (
   eligible: readonly Test[],
   selection: Selection,
-): Tag[] => {
+): {dimension: Dimension, values: string[]}[] => {
   const offerable = allTags.filter(
     (tag) =>
       isUnanswered(selection, tag.dimension) && isOfferable(tag, eligible),
   );
+  const remaining = eligible.flatMap(t => toEntries(t.accepts))
+      .filter(([dimension, values]) => isUnanswered(selection, dimension))
   const narrowingDimensions = new Set(
     offerable
       .filter((tag) => wouldExclude(tag, eligible))
       .map((tag) => tag.dimension),
   );
-  return offerable.filter((tag) => narrowingDimensions.has(tag.dimension));
+  const allowedTags =  offerable.filter((tag) => narrowingDimensions.has(tag.dimension));
+  const dings =  Object.groupBy(allowedTags, (tag) => tag.dimension)
+  return toEntries(dings).map(([dimension, tags]) => ({dimension, values: tags.map(tag => tag.value)}))
 };
+
+function toEntries<K extends string, V>(obj: Partial<Record<K, V>>){
+  return Object.entries(obj) as [K, V][];
+}
 
 const isEligible = (
   test: Test,

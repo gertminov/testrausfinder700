@@ -17,8 +17,12 @@ A Dimension paired with one of that Dimension's values, declaring one Criterion 
 _Avoid_: label, flag
 
 **Display name**:
-The wording a student reads for a Dimension or a Criterion (e.g. "Number of groups" for the Dimension, "Two" for one of its Criteria). Distinct from the key, which is the stable identifier and what deep links carry; rewording a Display name never breaks a link. A Criterion's Display name belongs to its Dimension — the same key in two Dimensions can read differently. Every Dimension also carries a short hint explaining what it asks.
+The wording a student reads for a Dimension, a Criterion or a test (e.g. "Number of groups" for the Dimension, "Two" for one of its Criteria, "Welch's t-test" for a test). Distinct from the key — for a test, its id — which is the stable identifier and what deep links carry; rewording a Display name never breaks a link. A Criterion's Display name belongs to its Dimension — the same key in two Dimensions can read differently. Every Dimension also carries a short hint explaining what it asks. Display names are in English, using a test's established English name.
 _Avoid_: label (overloaded with Tag), title
+
+**Test notes**:
+The explanatory text a student reads about one test in the Catalog: its assumptions, hypotheses, the question it answers, worked hints and examples. In English. Informational only — Test notes never affect eligibility; only Tags and sample-size bounds do.
+_Avoid_: info, description
 
 **Catalog**:
 The static, declarative list of statistical tests and the Tags each one accepts. Single source of truth for eligibility, exclusion, and which Criteria are still worth showing — there is no separately authored decision tree; relevance is always derived from the Tags on the currently-eligible tests.

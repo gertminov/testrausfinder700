@@ -1,3 +1,5 @@
+import { z } from "zod/v4";
+
 /**
  * The shape a Dimension declaration must satisfy. The non-empty tuple is what
  * rejects a Dimension declared with no values; it is exported so the type tests
@@ -30,7 +32,7 @@ export const dimensions = {
   equivalenceEstablished: ["yes", "no"],
   correlationHypothesis: ["zero", "nonzero"],
   factorCount: ["one", "two"],
-  dataSeriesCount: ["two"],
+  dataSeriesCount: ["two", "moreThanTwo"],
   // The two frequency flags are mutually exclusive, hence one Dimension, not
   // two flags.
   expectedCellFrequency: ["atMost10", "above10"],
@@ -86,6 +88,23 @@ export type Accepts = {
 export type Selection = {
   [D in Dimension]?: ValueOf<D>;
 };
+
+/**
+ * Validates a Selection: only Dimension keys (unknown keys are rejected), each
+ * optional, each holding at most one of that Dimension's values. Built from
+ * `dimensions` so it can't drift from the schema; the cast restores the
+ * per-Dimension key/value pairing that `Object.fromEntries` loses.
+ */
+export const selectionSchema = z.strictObject(
+  Object.fromEntries(
+    dimensionNames.map((dimension) => [
+      dimension,
+      z.enum(dimensions[dimension]).optional(),
+    ]),
+  ) as {
+    [D in Dimension]: z.ZodOptional<z.ZodEnum<z.core.util.ToEnum<ValueOf<D>>>>;
+  },
+) satisfies z.ZodType<Selection>;
 
 export const allTags: readonly Tag[] = Object.entries(dimensions).flatMap(
   ([dimension, values]) =>

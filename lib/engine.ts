@@ -1,13 +1,15 @@
 import {
   allTags,
   type Dimension,
-  dimensionNames, dimensions,
+  dimensionNames,
+  dimensions,
   type Selection,
   selectionToTags,
   type Tag,
   type TagOf,
 } from "./dimensions";
-import {catalog, Test} from "@/lib/tests";
+import { catalog, Test } from "@/lib/tests";
+import { read } from "node:fs";
 
 export interface MatchResult {
   selectedCriteria: Selection;
@@ -15,7 +17,7 @@ export interface MatchResult {
   sampleSize?: number;
   possibleTests: Test[];
   /** The Tags still worth offering*/
-  possibleCriteria: {dimension: Dimension, values: string[]}[];
+  possibleCriteria: { dimension: Dimension; values: string[] }[];
 }
 
 /**
@@ -53,26 +55,33 @@ const eligibleTests = (
  * answer in that Dimension changes nothing, so none of its Tags are offered.
  */
 const narrowingCriteria = (
-  eligible: readonly Test[],
+  tests: readonly Test[],
   selection: Selection,
-): {dimension: Dimension, values: string[]}[] => {
-  const offerable = allTags.filter(
-    (tag) =>
-      isUnanswered(selection, tag.dimension) && isOfferable(tag, eligible),
-  );
-  const remaining = eligible.flatMap(t => toEntries(t.accepts))
-      .filter(([dimension, values]) => isUnanswered(selection, dimension))
-  const narrowingDimensions = new Set(
-    offerable
-      .filter((tag) => wouldExclude(tag, eligible))
-      .map((tag) => tag.dimension),
-  );
-  const allowedTags =  offerable.filter((tag) => narrowingDimensions.has(tag.dimension));
-  const dings =  Object.groupBy(allowedTags, (tag) => tag.dimension)
-  return toEntries(dings).map(([dimension, tags]) => ({dimension, values: tags.map(tag => tag.value)}))
+): { dimension: Dimension; values: string[] }[] => {
+  const selectableCriteria: Partial<Record<Dimension, Set<string>>> = {};
+  for (const t of tests) {
+    const accepted = toEntries(t.accepts);
+    for (const [dimension, values] of accepted) {
+      if (
+        selection[dimension] !== undefined || //already selected
+        !wouldExclude(dimension, values, tests) // would not exclude any tests
+      )
+        continue;
+
+      if (selectableCriteria[dimension] === undefined) {
+        selectableCriteria[dimension] = new Set(values);
+      } else {
+        values.forEach((v) => selectableCriteria[dimension]?.add(v));
+      }
+    }
+  }
+  return toEntries(selectableCriteria).map(([dimension, values]) => ({
+    dimension,
+    values: Array.from(values),
+  }));
 };
 
-function toEntries<K extends string, V>(obj: Partial<Record<K, V>>){
+function toEntries<K extends string, V>(obj: Partial<Record<K, V>>) {
   return Object.entries(obj) as [K, V][];
 }
 
@@ -92,8 +101,16 @@ const isOfferable = (tag: Tag, eligible: readonly Test[]): boolean =>
   eligible.some((test) => isTaggedWith(test, tag));
 
 /** Whether selecting the Tag would Exclude at least one Eligible test. */
-const wouldExclude = (tag: Tag, eligible: readonly Test[]): boolean =>
-  eligible.some((test) => !accepts(test, tag));
+const wouldExclude = (
+  dimension: Dimension,
+  values: readonly string[],
+  tests: readonly Test[],
+): boolean => {
+  for (let value of values) {
+    if (tests.some((test) => !accepts(test, { dimension, value }))) return true;
+  }
+  return false;
+};
 
 /**
  * Whether a sample size lies within a test's inclusive `[minN, maxN]`. A

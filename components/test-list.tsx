@@ -20,13 +20,13 @@ export function TestList() {
           {possibleTests.length} Tests
         </div>
       </div>
-      <div className="flex-1 flex flex-col gap-2 min-h-0 overflow-y-auto scrollbar-thumb-only p-4">
+      <div className="flex-1 flex flex-col gap-1 min-h-0 overflow-y-auto scrollbar-thumb-only p-4">
         {possibleTests.map((test) => (
           <Link
             href={`/test/${test.id}${query ? `?${query}` : ""}`}
             key={test.id}
             className={cn(
-              "space-y-2 rounded px-4 py-2 transition-colors duration-300 ease-in-out cursor-pointer hover:bg-muted",
+              "space-y-2 rounded px-4 py-4 transition-colors duration-300 ease-in-out cursor-pointer hover:bg-muted",
               path === `/test/${test.id}` && "bg-muted",
             )}
           >

@@ -154,7 +154,7 @@ export function CriteriaSelector() {
                 }
               >
                 {/* Important: the trigger's own `border-input bg-transparent` sort after custom utilities. */}
-                <SelectTrigger className="w-full dimension-tint!">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select…" />
                 </SelectTrigger>
                 <SelectContent>

@@ -22,6 +22,17 @@ describe("dimensionHue", () => {
     expect(new Set(hues).size).toBe(dimensionNames.length);
   });
 
+  it("spreads the hues evenly around the wheel", () => {
+    const hues = dimensionNames.map(dimensionHue);
+    for (const [i, a] of hues.entries()) {
+      for (const b of hues.slice(i + 1)) {
+        expect(hueDistance(a, b)).toBeGreaterThanOrEqual(
+          Math.floor(360 / dimensionNames.length),
+        );
+      }
+    }
+  });
+
   it("keeps Dimensions shown next to each other far apart on the wheel", () => {
     for (let i = 1; i < dimensionNames.length; i++) {
       expect(

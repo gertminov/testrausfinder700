@@ -1,15 +1,21 @@
 import type { CSSProperties } from "react";
 import { type Dimension, dimensionNames } from "./dimensions";
 
-/**
- * Successive Dimensions step around the wheel by the golden angle rather than
- * by 360/n: neighbours in the schema's order — and so in the sidebar — land far
- * apart, however many Dimensions there are.
- */
-const GOLDEN_ANGLE = 137.508;
-
 /** Shifts the whole palette; the first Dimension starts here. */
 const START_HUE = 165;
+
+const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b));
+
+/**
+ * The wheel is cut into one evenly spaced slot per Dimension, so no two hues
+ * sit closer than 360/n. Successive Dimensions then skip ahead by roughly the
+ * golden ratio's share of the slots — neighbours in the schema's order, and so
+ * in the sidebar, land far apart. The skip must share no factor with the slot
+ * count, or the walk would revisit slots before filling them all.
+ */
+const slotCount = dimensionNames.length;
+let slotStep = Math.round(slotCount * 0.382);
+while (gcd(slotStep, slotCount) !== 1) slotStep++;
 
 /**
  * The hue that marks each Dimension's Tags wherever they appear. Only the hue
@@ -21,7 +27,8 @@ const START_HUE = 165;
 const hues = Object.fromEntries(
   dimensionNames.map((dimension, i) => [
     dimension,
-    Math.round((START_HUE + i * GOLDEN_ANGLE) % 360),
+    Math.round(START_HUE + (((i * slotStep) % slotCount) * 360) / slotCount) %
+      360,
   ]),
 ) as Record<Dimension, number>;
 

@@ -3,6 +3,7 @@ import { Test } from "@/lib/tests";
 import { dimensionNames, Tag } from "@/lib/dimensions";
 import { Badge } from "@/components/ui/badge";
 import { criterionName, dimensionName } from "@/lib/display-names";
+import { dimensionColorStyle } from "@/lib/dimension-colors";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { XIcon } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
@@ -28,7 +29,11 @@ export default function TestDrawer({ test }: { test: Test }) {
               const values = test.accepts[dimension];
               if (!values) return [];
               return (
-                <Badge key={dimension} variant={"outline"}>
+                <Badge
+                  key={dimension}
+                  variant="dimension"
+                  style={dimensionColorStyle(dimension)}
+                >
                   {dimensionName(dimension)}:{" "}
                   {values
                     .map((value) => criterionName({ dimension, value }))

@@ -18,6 +18,9 @@ const badgeVariants = cva(
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
+        // Colored by the `--dimension-hue` the caller sets. Important, because
+        // the base's `border-transparent` sorts after custom utilities.
+        dimension: "dimension-tint!",
       },
     },
     defaultVariants: {

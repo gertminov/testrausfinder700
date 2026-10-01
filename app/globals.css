@@ -133,3 +133,18 @@
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
 }
+
+/*
+ * Dimension colors. Each element sets its Dimension's hue as
+ * `--dimension-hue` (see `lib/dimension-colors.ts`); lightness and chroma —
+ * how muted the palette is — live only here.
+ */
+@utility dimension-tint {
+  background-color: oklch(0.96 0.025 var(--dimension-hue));
+  border-color: oklch(0.86 0.045 var(--dimension-hue));
+  color: oklch(0.38 0.06 var(--dimension-hue));
+}
+
+@utility dimension-dot {
+  background-color: oklch(0.68 0.08 var(--dimension-hue));
+}

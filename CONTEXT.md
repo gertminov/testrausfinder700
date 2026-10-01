@@ -17,7 +17,7 @@ A Dimension paired with one of that Dimension's values, declaring one Criterion 
 _Avoid_: label, flag
 
 **Display name**:
-The wording a student reads for a Dimension, a Criterion or a test (e.g. "Number of groups" for the Dimension, "Two" for one of its Criteria, "Welch's t-test" for a test). Distinct from the key — for a test, its id — which is the stable identifier and what deep links carry; rewording a Display name never breaks a link. A Criterion's Display name belongs to its Dimension — the same key in two Dimensions can read differently. Every Dimension also carries a short hint explaining what it asks. Display names are in English, using a test's established English name.
+The wording a student reads for a Dimension, a Criterion or a test (e.g. "Number of groups" for the Dimension, "Two" for one of its Criteria, "Welch's t-test" for a test). Distinct from the key — for a test, its id — which is the stable identifier and what deep links carry; rewording a Display name never breaks a link. A Criterion's Display name belongs to its Dimension — the same key in two Dimensions can read differently. Every Dimension also carries a short hint explaining what it asks, and its own color, which marks that Dimension's Tags wherever they appear — a color always means exactly one Dimension. Display names are in English, using a test's established English name.
 _Avoid_: label (overloaded with Tag), title
 
 **Test notes**:

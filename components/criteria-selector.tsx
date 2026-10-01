@@ -16,6 +16,7 @@ import {
   dimensionHint,
   dimensionName,
 } from "@/lib/display-names";
+import { dimensionColorStyle } from "@/lib/dimension-colors";
 import { useMatchResult } from "@/components/match-result-provider";
 import {
   Select,
@@ -125,12 +126,10 @@ export function CriteriaSelector() {
         </Field>
       </div>
       {filters.map((dimension) => (
-        <Field key={dimension.id}>
+        <Field key={dimension.id} style={dimensionColorStyle(dimension.id)}>
           <div className="flex items-center">
             <div className="flex w-3 items-center">
-              <span
-                className={`h-1.5 aspect-square rounded-full ${selection[dimension.id] ? "bg-primary" : ""}`}
-              ></span>
+              <span className="h-1.5 aspect-square rounded-full dimension-dot"></span>
             </div>
             <FieldLabel className="font-light">{dimension.name}</FieldLabel>
 
@@ -154,7 +153,8 @@ export function CriteriaSelector() {
                   handleSelectionChange(dimension.id, value)
                 }
               >
-                <SelectTrigger className="w-full">
+                {/* Important: the trigger's own `border-input bg-transparent` sort after custom utilities. */}
+                <SelectTrigger className="w-full dimension-tint!">
                   <SelectValue placeholder="Select…" />
                 </SelectTrigger>
                 <SelectContent>

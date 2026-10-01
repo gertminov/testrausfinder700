@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useMatchResult } from "@/components/match-result-provider";
-import { selectionToSearchParams } from "@/lib/dimensions";
+import {dimensionNames, selectionToSearchParams} from "@/lib/dimensions";
 import { usePathname } from "next/navigation";
 import { cn } from "cn";
+import {Badge} from "@/components/ui/badge";
+import {criterionName, dimensionName} from "@/lib/display-names";
 
 export function TestList() {
   const { possibleTests, selectedCriteria } = useMatchResult();
@@ -28,6 +30,20 @@ export function TestList() {
             )}
           >
             <div>{test.name}</div>
+              <div className="flex gap-2 flex-wrap">
+                  {dimensionNames.flatMap((dimension) => {
+                      const values= test.accepts[dimension];
+                      if (!values) return [];
+                      return (
+                          <Badge key={dimension} variant={"outline"}>
+                              {dimensionName(dimension)}:{" "}
+                              {values
+                                  .map((value) => criterionName({ dimension, value }))
+                                  .join(" / ")}
+                          </Badge>
+                      );
+                  })}
+              </div>
           </Link>
         ))}
       </div>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
+import type { Test } from "@/lib/tests";
 import { findTests } from "./engine";
-import { Test } from "@/lib/tests";
 
 /**
  * A small hand-built Catalog. Ids are fixture-local; the engine only cares
@@ -155,11 +155,7 @@ describe("findTests", () => {
 
   describe("possible criteria", () => {
     it("offers each discriminating Dimension with the values tagged on Eligible tests, in schema order", () => {
-      expect(
-        findTests(catalog, {}).possibleCriteria.toSorted((a, b) =>
-          a.dimension.localeCompare(b.dimension),
-        ),
-      ).toContainEqual([
+      expect(findTests(catalog, {}).possibleCriteria).toEqual([
         { dimension: "measurementScale", values: ["interval", "ordinal"] },
         { dimension: "sampleDependency", values: ["dependent", "independent"] },
       ]);

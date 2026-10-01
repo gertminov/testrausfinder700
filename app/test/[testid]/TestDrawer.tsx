@@ -25,15 +25,13 @@ export default function TestDrawer({ test }: { test: Test }) {
         <div className="mx-4 my-2">
           <div className="flex gap-2 flex-wrap">
             {dimensionNames.flatMap((dimension) => {
-              const values: readonly string[] | undefined =
-                test.accepts[dimension];
+              const values = test.accepts[dimension];
               if (!values) return [];
               return (
                 <Badge key={dimension} variant={"outline"}>
                   {dimensionName(dimension)}:{" "}
                   {values
-                    // `value` was read from `dimension`'s own key, so the pairing holds.
-                    .map((value) => criterionName({ dimension, value } as Tag))
+                    .map((value) => criterionName({ dimension, value }))
                     .join(" / ")}
                 </Badge>
               );

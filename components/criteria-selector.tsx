@@ -11,7 +11,11 @@ import {
   selectionToTags,
   Tag,
 } from "@/lib/dimensions";
-import {criterionName, dimensionHint, dimensionName} from "@/lib/display-names";
+import {
+  criterionName,
+  dimensionHint,
+  dimensionName,
+} from "@/lib/display-names";
 import { useMatchResult } from "@/components/match-result-provider";
 import {
   Select,
@@ -25,9 +29,13 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { useMemo } from "react";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { Button } from "@/components/ui/button";
-import {EraserIcon, QuestionIcon} from "@phosphor-icons/react";
+import { EraserIcon, QuestionIcon } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /** Writes the Selection and sample size to the URL; `MatchResultProvider` picks it up from there. */
 export function CriteriaSelector() {
@@ -97,9 +105,7 @@ export function CriteriaSelector() {
       <div className="flex">
         <div className="w-3"></div>
         <Field>
-          <div>
-            <FieldLabel>Sample size</FieldLabel>
-          </div>
+          <FieldLabel className={"font-light"}>Sample size</FieldLabel>
           <ButtonGroup>
             <Input
               placeholder="Sample size"
@@ -130,7 +136,9 @@ export function CriteriaSelector() {
 
             <div className="ml-4 flex-1 flex items-center justify-end">
               <Tooltip>
-                <TooltipTrigger render={<QuestionIcon className="text-muted-foreground"/>}/>
+                <TooltipTrigger
+                  render={<QuestionIcon className="text-muted-foreground" />}
+                />
                 <TooltipContent>{dimension.hint}</TooltipContent>
               </Tooltip>
             </div>

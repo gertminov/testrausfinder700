@@ -38,14 +38,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         notoSans.variable,
       )}
     >
-      <body className="h-full flex flex-col p-4">
+      <body className="h-full flex flex-col p-4 relative">
         <Nav />
         <Suspense>
           <MatchResultProvider>
             <div className="flex grow gap-4 min-h-0">
               <CriteriaSelector />
               <TestList />
-              <div className="flex-1 border-l border-muted ">{children}</div>
+              <div className="">{children}</div>
             </div>
           </MatchResultProvider>
         </Suspense>

@@ -37,7 +37,7 @@ export const dimensions = {
   // np·pq > 9. `no` is carried by the exact binomial test; without it the
   // Dimension could never discriminate.
   normalApproximationValid: ["yes", "no"],
-} as const satisfies DimensionSchema;
+} satisfies DimensionSchema;
 
 /** The name of a Dimension — a category of mutually-exclusive Criteria. */
 export type Dimension = keyof typeof dimensions;
@@ -84,7 +84,7 @@ export type Accepts = {
  * the engine has to detect and reject.
  */
 export type Selection = {
-  readonly [D in Dimension]?: ValueOf<D>;
+  [D in Dimension]?: ValueOf<D>;
 };
 
 export const allTags: readonly Tag[] = Object.entries(dimensions).flatMap(
@@ -130,17 +130,17 @@ const isDimension = (key: string): key is Dimension =>
  * URL can't produce an invalid Selection. A repeated key keeps its first value.
  */
 export const selectionFromSearchParams = (
-  params: Record<string, string[]>,
-): Selection =>
-  Object.fromEntries(
-    Object.entries(params).flatMap(([key, raw]) => {
-      const value = Array.isArray(raw) ? raw[0] : raw;
-      if (!isDimension(key) || value === undefined) return [];
-      return (dimensions[key] as readonly string[]).includes(value)
-        ? [[key, value]]
-        : [];
-    }),
-  );
+  params: Record<string, string>,
+): Selection => {
+  const selection: Selection = {};
+  for (const key in params) {
+    const value = params[key];
+    if (isDimension(key) && dimensions[key].includes(value)) {
+      selection[key] = value;
+    }
+  }
+  return selection;
+};
 
 /** The inverse of `selectionFromSearchParams`, in the schema's Dimension order. */
 export const selectionToSearchParams = (
@@ -161,9 +161,9 @@ export const SAMPLE_SIZE_PARAM = "sampleSize";
  * positive whole number is dropped, so a bad URL means "no sample size".
  */
 export const sampleSizeFromSearchParams = (
-  params: Record<string, string[]>,
+  params: Record<string, string>,
 ): number | undefined => {
-  const raw = params[SAMPLE_SIZE_PARAM]?.[0];
+  const raw = params[SAMPLE_SIZE_PARAM];
   if (raw === undefined || !/^\d+$/.test(raw)) return undefined;
   const sampleSize = Number(raw);
   return sampleSize > 0 ? sampleSize : undefined;

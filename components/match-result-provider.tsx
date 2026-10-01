@@ -20,12 +20,11 @@ const MatchResultContext = createContext<MatchResult | null>(null);
  */
 export function MatchResultProvider({ children }: { children: ReactNode }) {
   const searchParams = useSearchParams();
-  const params = Object.fromEntries(
-    [...new Set(searchParams.keys())].map((key) => [
-      key,
-      searchParams.getAll(key),
-    ]),
-  );
+  const params: Record<string, string> = {};
+  searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
+
   const result = findTests(
     allTests,
     selectionFromSearchParams(params),

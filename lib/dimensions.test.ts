@@ -3,14 +3,15 @@ import {
   sampleSizeFromSearchParams,
   selectionFromSearchParams,
   selectionToSearchParams,
+  Selection,
 } from "./dimensions";
 
 describe("selectionFromSearchParams", () => {
   it("keeps valid Criteria", () => {
     expect(
       selectionFromSearchParams({
-        measurementScale: ["interval"],
-        groupCount: ["two"],
+        measurementScale: "interval",
+        groupCount: "two",
       }),
     ).toEqual({ measurementScale: "interval", groupCount: "two" });
   });
@@ -18,24 +19,18 @@ describe("selectionFromSearchParams", () => {
   it("drops unknown Dimensions and values the Dimension doesn't admit", () => {
     expect(
       selectionFromSearchParams({
-        nope: ["interval"],
-        measurementScale: ["huge"],
-        groupCount: [],
+        nope: "interval",
+        measurementScale: "huge",
+        groupCount: "",
       }),
     ).toEqual({});
   });
 
-  it("keeps the first value of a repeated key", () => {
-    expect(
-      selectionFromSearchParams({ rankTies: ["absent", "present"] }),
-    ).toEqual({ rankTies: "absent" });
-  });
-
   it("round-trips through selectionToSearchParams", () => {
     const selection = {
-      sampleDependency: ["dependent"],
-      measurementScale: ["ordinal"],
-    } as Selection;
+      sampleDependency: "dependent",
+      measurementScale: "ordinal",
+    };
     const params = Object.fromEntries(selectionToSearchParams(selection));
     expect(selectionFromSearchParams(params)).toEqual(selection);
   });
@@ -43,11 +38,11 @@ describe("selectionFromSearchParams", () => {
 
 describe("sampleSizeFromSearchParams", () => {
   it("reads a positive whole number", () => {
-    expect(sampleSizeFromSearchParams({ sampleSize: ["30"] })).toBe(30);
+    expect(sampleSizeFromSearchParams({ sampleSize: "30" })).toBe(30);
   });
 
   it("drops missing, zero, negative, fractional and non-numeric values", () => {
-    for (const raw of [[], ["0"], ["-5"], ["2.5"], ["abc"], [""]]) {
+    for (const raw of ["0", "-5", "2.5", "abc", ""]) {
       expect(sampleSizeFromSearchParams({ sampleSize: raw })).toBeUndefined();
     }
     expect(sampleSizeFromSearchParams({})).toBeUndefined();

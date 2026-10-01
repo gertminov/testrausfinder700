@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 652 609" fill="currentColor">
+  <defs>
+    <!-- everything below the outer roof line -->
+    <clipPath id="below-roof">
+      <path d="M326 0 L652 325 L652 609 L0 609 L0 325 Z"/>
+    </clipPath>
+  </defs>
+  <path id="roof" d="M326 0 L652 325 L578 399 L326 147 L74 399 L0 325 Z"/>
+  <!-- pillar width = stroke-width (centered on x=201 and x=451) -->
+  <path id="pillars" d="M201 0 V609 M451 0 V609" fill="none" stroke="currentColor" stroke-width="128" clip-path="url(#below-roof)"/>
+  <path id="crossbar" d="M201 346 L451 346 L451 429 L201 429 Z"/>
+</svg>

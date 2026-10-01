@@ -99,7 +99,7 @@ export function CriteriaSelector() {
   return (
     <div className="w-72 space-y-6 pr-4 py-4 min-h-0 overflow-y-auto scrollbar-gutter-stable scrollbar-thumb-only border-r border-muted">
       <div className="flex justify-center">
-        <Button onClick={() => router.replace(pathname, { scroll: false })}>
+        <Button variant={"outline"} onClick={() => router.replace(pathname, { scroll: false })}>
           Reset
         </Button>
       </div>
@@ -129,7 +129,7 @@ export function CriteriaSelector() {
         <Field key={dimension.id} style={dimensionColorStyle(dimension.id)}>
           <div className="flex items-center">
             <div className="flex w-3 items-center">
-              <span className="h-1.5 aspect-square rounded-full dimension-dot"></span>
+              <span className={`h-1.5 aspect-square rounded-full ${selection[dimension.id]? 'dimension-dot' : ''}`}></span>
             </div>
             <FieldLabel className="font-light">{dimension.name}</FieldLabel>
 
@@ -153,7 +153,6 @@ export function CriteriaSelector() {
                   handleSelectionChange(dimension.id, value)
                 }
               >
-                {/* Important: the trigger's own `border-input bg-transparent` sort after custom utilities. */}
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select…" />
                 </SelectTrigger>

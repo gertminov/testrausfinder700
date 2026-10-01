@@ -26,7 +26,8 @@ export function TestList() {
             href={`/test/${test.id}${query ? `?${query}` : ""}`}
             key={test.id}
             className={cn(
-              "space-y-2 rounded px-4 py-4 transition-colors duration-300 ease-in-out cursor-pointer hover:bg-muted",
+              "space-y-2 px-4 py-4 transition-all duration-300 border border-transparent" +
+                " ease-in-out cursor-pointer hover:border-muted-foreground/50 hover:shadow-xs",
               path === `/test/${test.id}` && "bg-muted",
             )}
           >

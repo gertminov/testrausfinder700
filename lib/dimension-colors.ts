@@ -83,13 +83,15 @@ const dimensionColor = (
   }
 };
 
+const defaultPalette: DimensionPalette = DimensionPalette.Key
+
 /**
  * Inline style that sets `--dimension-color`, the base color the
  * `dimension-*` utilities in `globals.css` derive their tints from.
  */
 export const dimensionColorStyle = (
   dimension: Dimension,
-  palette: DimensionPalette = DimensionPalette.Hue,
+  palette: DimensionPalette = defaultPalette,
 ): CSSProperties =>
   // `CSSProperties` has no slot for custom properties, hence the cast.
   ({

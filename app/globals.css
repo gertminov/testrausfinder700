@@ -135,16 +135,17 @@
 }
 
 /*
- * Dimension colors. Each element sets its Dimension's hue as
- * `--dimension-hue` (see `lib/dimension-colors.ts`); lightness and chroma —
- * how muted the palette is — live only here.
+ * Dimension colors. Each element sets its Dimension's base color as
+ * `--dimension-color` (see `lib/dimension-colors.ts`). The tints keep its hue
+ * and a share of its chroma but fix the lightness, so any base color — dark or
+ * light — gives a readable badge. How muted the tints are lives only here.
  */
 @utility dimension-tint {
-  background-color: oklch(0.96 0.025 var(--dimension-hue));
-  border-color: oklch(0.86 0.045 var(--dimension-hue));
-  color: oklch(0.38 0.06 var(--dimension-hue));
+  background-color: oklch(from var(--dimension-color) 0.96 calc(c * 0.25) h);
+  border-color: oklch(from var(--dimension-color) 0.86 calc(c * 0.45) h);
+  color: oklch(from var(--dimension-color) 0.38 calc(c * 0.6) h);
 }
 
 @utility dimension-dot {
-  background-color: oklch(0.68 0.08 var(--dimension-hue));
+  background-color: var(--dimension-color);
 }

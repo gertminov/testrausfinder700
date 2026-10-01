@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { dimensionColorStyle, dimensionHue } from "./dimension-colors";
+import {
+  DimensionPalette,
+  dimensionColorStyle,
+  dimensionHue,
+} from "./dimension-colors";
 import { dimensionNames } from "./dimensions";
 
 /** The shortest distance between two hues around the color wheel. */
@@ -46,9 +50,28 @@ describe("dimensionHue", () => {
 });
 
 describe("dimensionColorStyle", () => {
-  it("hands the Dimension's hue to CSS", () => {
+  it("hands the Dimension's hue-wheel color to CSS by default", () => {
     expect(dimensionColorStyle("groupCount")).toEqual({
-      "--dimension-hue": dimensionHue("groupCount"),
+      "--dimension-color": `oklch(0.68 0.1 ${dimensionHue("groupCount")})`,
     });
+  });
+
+  it("hands the Dimension's key color to CSS in the key palette", () => {
+    expect(dimensionColorStyle("groupCount", DimensionPalette.Key)).toEqual({
+      "--dimension-color": "#5aabdb",
+    });
+  });
+
+  it("gives every Dimension its own key color", () => {
+    const colors = dimensionNames.map(
+      (dimension) =>
+        (
+          dimensionColorStyle(dimension, DimensionPalette.Key) as Record<
+            string,
+            string
+          >
+        )["--dimension-color"],
+    );
+    expect(new Set(colors).size).toBe(dimensionNames.length);
   });
 });

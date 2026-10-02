@@ -7,6 +7,7 @@ import {MatchResultProvider} from "@/components/match-result-provider";
 import {CriteriaSelector} from "@/components/criteria-selector";
 import {TestList} from "@/components/test-list";
 import Nav from "@/components/nav";
+import CriteriaDrawer from "@/components/criteria-drawer";
 
 const googleSans = Google_Sans({subsets: ['latin'], variable: '--font-sans'})
 
@@ -38,14 +39,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         googleSans.variable,
       )}
     >
-      <body className="h-full flex flex-col px-4 relative">
+      <body className="h-full flex flex-col px-2 md:px-4 relative">
         <Nav />
         <Suspense>
           <MatchResultProvider>
-            <div className="flex grow gap-4 min-h-0">
-              <CriteriaSelector />
+            <div className="flex grow flex-col md:flex-row md:gap-4 min-h-0">
+              <div className="hidden md:block w-72 min-w-72 border-r border-muted">
+                <CriteriaSelector />
+              </div>
               <TestList />
               <div className="">{children}</div>
+              <div className="md:hidden">
+                <CriteriaDrawer/>
+              </div>
             </div>
           </MatchResultProvider>
         </Suspense>

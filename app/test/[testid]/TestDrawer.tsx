@@ -4,13 +4,13 @@ import { dimensionNames, Tag } from "@/lib/dimensions";
 import { Badge } from "@/components/ui/badge";
 import { criterionName, dimensionName } from "@/lib/display-names";
 import { dimensionColorStyle } from "@/lib/dimension-colors";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { XIcon } from "@phosphor-icons/react/ssr";
 import Link from "next/link";
 
 export default function TestDrawer({ test }: { test: Test }) {
   return (
-    <Drawer open={true} swipeDirection={"right"} modal={false}>
+    <Drawer open={true} swipeDirection={"right"} modal={false} >
       <DrawerContent className="max-w-2xl w-2/5 min-w-96 bg-muted">
         <DrawerHeader>
           <div className={"flex items-center gap-4 justify-between"}>

@@ -6,27 +6,29 @@ import {dimensionNames, selectionToSearchParams} from "@/lib/dimensions";
 import { usePathname } from "next/navigation";
 import { cn } from "cn";
 import {Badge} from "@/components/ui/badge";
-import {criterionName, dimensionName} from "@/lib/display-names";
+import {criterionName, dimensionName, dimensionShortName} from "@/lib/display-names";
 import { dimensionColorStyle } from "@/lib/dimension-colors";
+import {useIsMobile} from "@/hooks/use-mobile";
 
 export function TestList() {
   const { possibleTests, selectedCriteria } = useMatchResult();
+  const isMobile = useIsMobile()
   const query = selectionToSearchParams(selectedCriteria).toString();
   const path = usePathname();
   return (
     <div className="flex-1 min-h-0 h-full flex flex-col">
-      <div className="flex pt-2">
+      <div className="flex pt-2 md:px-8">
         <div className="text-sm text-muted-foreground">
           {possibleTests.length} Tests
         </div>
       </div>
-      <div className="flex-1 flex flex-col gap-1 min-h-0 overflow-y-auto scrollbar-thumb-only p-4">
+      <div className="flex-1 flex flex-col gap-1 min-h-0 overflow-y-auto scrollbar-thumb-only md:p-4">
         {possibleTests.map((test) => (
           <Link
             href={`/test/${test.id}${query ? `?${query}` : ""}`}
             key={test.id}
             className={cn(
-              "space-y-2 px-4 py-4 transition-all duration-300 border border-transparent" +
+              "space-y-2 md:px-4 py-4 transition-all duration-300 border border-transparent" +
                 " ease-in-out cursor-pointer hover:border-muted-foreground/50 hover:shadow-xs",
               path === `/test/${test.id}` && "bg-muted",
             )}
@@ -42,7 +44,7 @@ export function TestList() {
                               variant="dimension"
                               style={dimensionColorStyle(dimension)}
                           >
-                              {dimensionName(dimension)}:{" "}
+                              {!isMobile ? dimensionShortName(dimension) + ": ": ''}
                               {values
                                   .map((value) => criterionName({ dimension, value }))
                                   .join(" / ")}

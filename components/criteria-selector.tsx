@@ -97,7 +97,7 @@ export function CriteriaSelector() {
   }
 
   return (
-    <div className="w-72 min-w-72 space-y-6 pr-4 py-4 min-h-0 overflow-y-auto scrollbar-gutter-stable scrollbar-thumb-only border-r border-muted">
+    <div className="h-full space-y-6 pr-4 py-4 min-h-0 overflow-y-auto scrollbar-gutter-stable scrollbar-thumb-only ">
       <div className="flex justify-center">
         <Button variant={"outline"} onClick={() => router.replace(pathname, { scroll: false })}>
           Reset

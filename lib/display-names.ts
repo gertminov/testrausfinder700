@@ -8,6 +8,7 @@ import type { Dimension, Tag, ValueOf } from "./dimensions";
  */
 type DimensionDisplay<D extends Dimension> = {
   readonly name: string;
+  readonly short?: string;
   readonly hint: string;
   readonly values: { readonly [V in ValueOf<D>]: string };
 };
@@ -24,11 +25,13 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   independentVariableScale: {
     name: "Independent variable scale",
+    short: "IV scale",
     hint: "Scale level of the independent variable",
     values: { interval: "Interval", ordinal: "Ordinal", nominal: "Nominal" },
   },
   researchQuestion: {
     name: "Research question",
+    short: "Question",
     hint: "What the hypothesis is about",
     values: {
       difference: "Difference",
@@ -38,6 +41,7 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   populationVariance: {
     name: "Population variance",
+    short: "Pop. var.",
     hint: "Is the population variance given, rather than estimated from the sample?",
     values: { known: "Known", unknown: "Unknown" },
   },
@@ -58,6 +62,7 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   testFamily: {
     name: "Test type",
+    short: "Test",
     hint: "Parametric tests assume a distribution, e.g. normality",
     values: { parametric: "Parametric", nonparametric: "Non-parametric" },
   },
@@ -73,6 +78,7 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   differenceRegarding: {
     name: "Difference in",
+    short: "Difference",
     hint: "Which property of the samples is compared",
     values: {
       mean: "Mean",
@@ -82,6 +88,7 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   categoryCount: {
     name: "Categories",
+    short: "Cats",
     hint: "How many categories the nominal variable has",
     values: {
       dichotomous: "Dichotomous (2)",
@@ -90,21 +97,25 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   marginalProbability: {
     name: "Marginal probabilities",
+    short: "Marginal",
     hint: "Are the expected category probabilities given in advance?",
     values: { known: "Known", unknown: "Unknown" },
   },
   equivalenceEstablished: {
     name: "Equivalence established",
+    short: "Equiv.",
     hint: "Has an expert set an equivalence range ±Δ?",
     values: { yes: "Yes", no: "No" },
   },
   correlationHypothesis: {
     name: "Hypothesised correlation",
+    short: "Correlation",
     hint: "The population correlation ρ the null hypothesis assumes",
     values: { zero: "ρ = 0", nonzero: "ρ ≠ 0" },
   },
   factorCount: {
     name: "Number of factors",
+    short: "Factors",
     hint: "How many independent variables group the data",
     values: { one: "One", two: "Two" },
   },
@@ -115,11 +126,13 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   },
   expectedCellFrequency: {
     name: "Expected cell frequencies",
+    short: "Expected",
     hint: "Expected frequency e = n·π in each category",
     values: { atMost10: "≤ 10", above10: "> 10" },
   },
   normalApproximationValid: {
     name: "Normal approximation valid",
+    short: "Normal approx.",
     hint: "Normal approximation of the binomial holds when n·p·q > 9",
     values: { yes: "Yes (n·p·q > 9)", no: "No" },
   },
@@ -134,6 +147,9 @@ export const criterionName = (tag: Tag): string =>
 /** The Display name of a Dimension. */
 export const dimensionName = (dimension: Dimension): string =>
   displayNames[dimension].name;
+
+export const dimensionShortName = (dimension: Dimension): string =>
+    displayNames[dimension].short ?? displayNames[dimension].name;
 
 /** A short explanation of what a Dimension asks. */
 export const dimensionHint = (dimension: Dimension): string =>

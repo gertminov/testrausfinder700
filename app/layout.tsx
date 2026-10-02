@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
+import type {Metadata} from "next";
+import {Geist, Geist_Mono, Google_Sans} from "next/font/google";
 import "./globals.css";
-import { Suspense } from "react";
-import { cn } from "@/lib/utils";
-import { MatchResultProvider } from "@/components/match-result-provider";
-import { CriteriaSelector } from "@/components/criteria-selector";
-import { TestList } from "@/components/test-list";
+import {Suspense} from "react";
+import {cn} from "@/lib/utils";
+import {MatchResultProvider} from "@/components/match-result-provider";
+import {CriteriaSelector} from "@/components/criteria-selector";
+import {TestList} from "@/components/test-list";
 import Nav from "@/components/nav";
 
-const notoSans = Noto_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const googleSans = Google_Sans({subsets: ['latin'], variable: '--font-sans'})
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,10 +35,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         geistSans.variable,
         geistMono.variable,
         "font-sans",
-        notoSans.variable,
+        googleSans.variable,
       )}
     >
-      <body className="h-full flex flex-col p-4 relative">
+      <body className="h-full flex flex-col px-4 relative">
         <Nav />
         <Suspense>
           <MatchResultProvider>

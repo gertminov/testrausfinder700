@@ -18,7 +18,7 @@ type DimensionDisplay<D extends Dimension> = {
  */
 const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
   measurementScale: {
-    name: "Measurement scale",
+    name: "Scale",
     hint: "Scale level of the dependent variable",
     values: { interval: "Interval", ordinal: "Ordinal", nominal: "Nominal" },
   },
@@ -47,7 +47,7 @@ const displayNames: { readonly [D in Dimension]: DimensionDisplay<D> } = {
     values: { dependent: "Dependent (paired)", independent: "Independent" },
   },
   groupCount: {
-    name: "Number of groups",
+    name: "Groups",
     hint: "How many samples are compared",
     values: {
       one: "One",

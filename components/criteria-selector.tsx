@@ -97,7 +97,7 @@ export function CriteriaSelector() {
   }
 
   return (
-    <div className="w-72 space-y-6 pr-4 py-4 min-h-0 overflow-y-auto scrollbar-gutter-stable scrollbar-thumb-only border-r border-muted">
+    <div className="w-72 min-w-72 space-y-6 pr-4 py-4 min-h-0 overflow-y-auto scrollbar-gutter-stable scrollbar-thumb-only border-r border-muted">
       <div className="flex justify-center">
         <Button variant={"outline"} onClick={() => router.replace(pathname, { scroll: false })}>
           Reset
@@ -105,7 +105,7 @@ export function CriteriaSelector() {
       </div>
       <div className="flex">
         <div className="w-3"></div>
-        <Field>
+        <Field className="gap-1">
           <FieldLabel className={"font-light"}>Sample size</FieldLabel>
           <ButtonGroup>
             <Input
@@ -126,7 +126,7 @@ export function CriteriaSelector() {
         </Field>
       </div>
       {filters.map((dimension) => (
-        <Field key={dimension.id} style={dimensionColorStyle(dimension.id)}>
+        <Field key={dimension.id} style={dimensionColorStyle(dimension.id)} className="gap-1">
           <div className="flex items-center">
             <div className="flex w-3 items-center">
               <span className={`h-1.5 aspect-square rounded-full ${selection[dimension.id]? 'dimension-dot' : ''}`}></span>

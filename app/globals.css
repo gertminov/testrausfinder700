@@ -141,8 +141,7 @@
  * light — gives a readable badge. How muted the tints are lives only here.
  */
 @utility dimension-tint {
-  background-color: oklch(from var(--dimension-color) 0.96 calc(c * 0.25) h);
-  border-color: oklch(from var(--dimension-color) 0.86 calc(c * 0.45) h);
+  background-color: oklch(from var(--dimension-color) 0.95 calc(c * 0.3) h);
   color: oklch(from var(--dimension-color) 0.38 calc(c * 0.6) h);
 }
 

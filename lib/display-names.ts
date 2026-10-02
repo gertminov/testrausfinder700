@@ -149,7 +149,7 @@ export const dimensionName = (dimension: Dimension): string =>
   displayNames[dimension].name;
 
 export const dimensionShortName = (dimension: Dimension): string =>
-    displayNames[dimension].short ?? displayNames[dimension].name;
+  displayNames[dimension].short ?? displayNames[dimension].name;
 
 /** A short explanation of what a Dimension asks. */
 export const dimensionHint = (dimension: Dimension): string =>

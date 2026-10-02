@@ -65,11 +65,7 @@ const narrowingCriteria = (
     .filter((dimension) => isUnanswered(selection, dimension))
     .map((dimension) => ({
       dimension,
-      values: [
-        ...new Set(
-          tests.flatMap((t) => t.accepts[dimension] ?? []),
-        ),
-      ],
+      values: [...new Set(tests.flatMap((t) => t.accepts[dimension] ?? []))],
     }))
     .filter(({ dimension, values }) => wouldExclude(dimension, values, tests));
 

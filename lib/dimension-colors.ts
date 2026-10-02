@@ -83,7 +83,7 @@ const dimensionColor = (
   }
 };
 
-const defaultPalette: DimensionPalette = DimensionPalette.Key
+const defaultPalette: DimensionPalette = DimensionPalette.Key;
 
 /**
  * Inline style that sets `--dimension-color`, the base color the

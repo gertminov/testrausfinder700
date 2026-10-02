@@ -1,15 +1,15 @@
-import type {Metadata} from "next";
-import {Geist, Geist_Mono, Google_Sans} from "next/font/google";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono, Google_Sans } from "next/font/google";
 import "./globals.css";
-import {Suspense} from "react";
-import {cn} from "@/lib/utils";
-import {MatchResultProvider} from "@/components/match-result-provider";
-import {CriteriaSelector} from "@/components/criteria-selector";
-import {TestList} from "@/components/test-list";
+import { Suspense } from "react";
+import { cn } from "@/lib/utils";
+import { MatchResultProvider } from "@/components/match-result-provider";
+import { CriteriaSelector } from "@/components/criteria-selector";
+import { TestList } from "@/components/test-list";
 import Nav from "@/components/nav";
 import CriteriaDrawer from "@/components/criteria-drawer";
 
-const googleSans = Google_Sans({subsets: ['latin'], variable: '--font-sans'})
+const googleSans = Google_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,7 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <TestList />
               <div className="">{children}</div>
               <div className="md:hidden">
-                <CriteriaDrawer/>
+                <CriteriaDrawer />
               </div>
             </div>
           </MatchResultProvider>

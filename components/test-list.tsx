@@ -2,17 +2,21 @@
 
 import Link from "next/link";
 import { useMatchResult } from "@/components/match-result-provider";
-import {dimensionNames, selectionToSearchParams} from "@/lib/dimensions";
+import { dimensionNames, selectionToSearchParams } from "@/lib/dimensions";
 import { usePathname } from "next/navigation";
 import { cn } from "cn";
-import {Badge} from "@/components/ui/badge";
-import {criterionName, dimensionName, dimensionShortName} from "@/lib/display-names";
+import { Badge } from "@/components/ui/badge";
+import {
+  criterionName,
+  dimensionName,
+  dimensionShortName,
+} from "@/lib/display-names";
 import { dimensionColorStyle } from "@/lib/dimension-colors";
-import {useIsMobile} from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function TestList() {
   const { possibleTests, selectedCriteria } = useMatchResult();
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
   const query = selectionToSearchParams(selectedCriteria).toString();
   const path = usePathname();
   return (
@@ -34,24 +38,24 @@ export function TestList() {
             )}
           >
             <div>{test.name}</div>
-              <div className="flex gap-2 flex-wrap">
-                  {dimensionNames.flatMap((dimension) => {
-                      const values= test.accepts[dimension];
-                      if (!values) return [];
-                      return (
-                          <Badge
-                              key={dimension}
-                              variant="dimension"
-                              style={dimensionColorStyle(dimension)}
-                          >
-                              {!isMobile ? dimensionShortName(dimension) + ": ": ''}
-                              {values
-                                  .map((value) => criterionName({ dimension, value }))
-                                  .join(" / ")}
-                          </Badge>
-                      );
-                  })}
-              </div>
+            <div className="flex gap-2 flex-wrap">
+              {dimensionNames.flatMap((dimension) => {
+                const values = test.accepts[dimension];
+                if (!values) return [];
+                return (
+                  <Badge
+                    key={dimension}
+                    variant="dimension"
+                    style={dimensionColorStyle(dimension)}
+                  >
+                    {!isMobile ? dimensionShortName(dimension) + ": " : ""}
+                    {values
+                      .map((value) => criterionName({ dimension, value }))
+                      .join(" / ")}
+                  </Badge>
+                );
+              })}
+            </div>
           </Link>
         ))}
       </div>

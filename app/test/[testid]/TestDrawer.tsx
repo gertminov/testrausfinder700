@@ -10,7 +10,7 @@ import Link from "next/link";
 
 export default function TestDrawer({ test }: { test: Test }) {
   return (
-    <Drawer open={true} swipeDirection={"right"} modal={false} >
+    <Drawer open={true} swipeDirection={"right"} modal={false}>
       <DrawerContent className="max-w-2xl w-2/5 min-w-96 bg-muted">
         <DrawerHeader>
           <div className={"flex items-center gap-4 justify-between"}>
